@@ -40,6 +40,10 @@ class LifeSpanMain extends PluginBase{
         $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener(), $this);
     }
 
+    public function onDisable(){
+        $this->save();
+    }
+
     public function load(){
         $dataFolder = $this->getDataFolder();
         if (!file_exists($dataFolder)) {
