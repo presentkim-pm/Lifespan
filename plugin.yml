@@ -1,0 +1,27 @@
+---
+name:             LifeSpan
+main:             presentkim\lifespan\LifeSpanMain
+version:          1.0.0
+api:              [3.0.0, 3.0.0-ALPHA10]
+author:           PresentKim
+
+permissions:
+  lifespan.cmd:
+    description:  LifeSpan main command
+    default:      op
+  lifespan.item.cmd:
+    description:  LifeSpan item command
+    default:      op
+  lifespan.arrow.cmd:
+    description:  LifeSpan arrow command
+    default:      op
+  lifespan.lang.cmd:
+    description:  LifeSpan lang command
+    default:      op
+  lifespan.reload.cmd:
+    description:  LifeSpan reload command
+    default:      op
+  lifespan.save.cmd:
+    description:  LifeSpan save command
+    default:      op
+...
