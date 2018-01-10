@@ -3,7 +3,7 @@
 namespace presentkim\lifespan\listener;
 
 use pocketmine\entity\{
-    Entity, Item, projectile\Arrow
+  Entity, Item, projectile\Arrow
 };
 use pocketmine\event\{
   entity\EntitySpawnEvent, Listener
@@ -15,8 +15,15 @@ class EntityEventListener implements Listener{
     /** @var Plugin */
     private $owner = null;
 
+    /** @var \ReflectionProperty */
+    private $property = null;
+
     public function __construct(){
         $this->owner = Plugin::getInstance();
+
+        $reflection = new \ReflectionClass(Entity::class);
+        $this->property = $reflection->getProperty('age');
+        $this->property->setAccessible(true);
     }
 
     /** @param EntitySpawnEvent $event */
