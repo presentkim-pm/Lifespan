@@ -2,8 +2,9 @@
 
 namespace presentkim\lifespan\listener;
 
-use pocketmine\entity\Item;
-use pocketmine\entity\projectile\Arrow;
+use pocketmine\entity\{
+    Entity, Item, projectile\Arrow
+};
 use pocketmine\event\{
   entity\EntitySpawnEvent, Listener
 };
