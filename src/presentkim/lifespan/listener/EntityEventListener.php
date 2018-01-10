@@ -30,16 +30,9 @@ class EntityEventListener implements Listener{
     public function onEntitySpawnEvent(EntitySpawnEvent $event){
         $entity = $event->getEntity();
         if ($entity instanceof Item) {
-            $reflection = new \ReflectionClass(Item::class);
-            $lifespan = 6000 - $this->owner->getConfig()->get('item-lifespan');
+            $this->property->setValue($entity, 6000 - $this->owner->getConfig()->get('item-lifespan'));
         } elseif ($entity instanceof Arrow) {
-            $reflection = new \ReflectionClass(Arrow::class);
-            $lifespan = 1200 - $this->owner->getConfig()->get('arrow-lifespan');
-        } else {
-            return;
+            $this->property->setValue($entity, 1200 - $this->owner->getConfig()->get('arrow-lifespan'));
         }
-        $property = $reflection->getProperty('age');
-        $property->setAccessible(true);
-        $property->setValue($entity, $lifespan);
     }
 }
