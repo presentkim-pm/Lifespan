@@ -24,11 +24,9 @@ class EntityEventListener implements Listener{
         if ($entity instanceof Item) {
             $reflection = new \ReflectionClass(Item::class);
             $lifespan = 6000 - $this->owner->getConfig()->get('item-lifespan');
-            var_dump('Item: ' . $lifespan);
         } elseif ($entity instanceof Arrow) {
             $reflection = new \ReflectionClass(Arrow::class);
             $lifespan = 1200 - $this->owner->getConfig()->get('arrow-lifespan');
-            var_dump('Arrow: ' . $lifespan);
         } else {
             return;
         }
