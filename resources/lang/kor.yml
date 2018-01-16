@@ -5,31 +5,33 @@ command-generic-failure@permission : "당신은 이 명령어를 사용할 권�
 command-generic-failure@invalid : "{%0}는 잘못된 값입니다"
 
 command-lifespan: "lifespan"
-command-lifespan@usage: "/LifeSpan <item | arrow  | lang | reload | save>"
+command-lifespan@usage: "/lifespan <item | arrow  | lang | reload | save>"
 command-lifespan@description: "LifeSpan의 메인 명령어"
 command-lifespan@aliases: ["ls"]
 
 command-lifespan-item: "item"
-command-lifespan-item@usage: "/LifeSpan Item <수명>"
+command-lifespan-item@usage: "/lifespan Item <수명>"
 command-lifespan-item@success: "아이템의 수명이 {%0}로 설정되었습니다"
 command-lifespan-item@aliases: ["i"]
 
 command-lifespan-arrow: "arrow"
-command-lifespan-arrow@usage: "/LifeSpan Arrow <수명>"
+command-lifespan-arrow@usage: "/lifespan Arrow <수명>"
 command-lifespan-arrow@success: "화살의 수명이 {%0}로 설정되었습니다"
 command-lifespan-arrow@aliases: ["a"]
 
 command-lifespan-lang: "lang"
-command-lifespan-lang@usage: "/LifeSpan Lang <언어명>"
+command-lifespan-lang@usage: "/lifespan Lang <언어명>"
 command-lifespan-lang@success: "{%0}언어 파일을 불러왔습니다."
 command-lifespan-lang@failure: "{%0}는 잘못된 언어명입니다."
 command-lifespan-lang@aliases: ["language"]
 
 command-lifespan-reload: "reload"
+command-lifespan-reload@usage: "/lifespan Reload"
 command-lifespan-reload@success: "모든 데이터를 불러왔습니다."
 command-lifespan-reload@aliases: ["rl"]
 
 command-lifespan-save: "save"
+command-lifespan-save@usage: "/lifespan Save"
 command-lifespan-save@success: "모든 데이터를 저장했습니다."
 command-lifespan-save@aliases: ["sv"]
 ...
