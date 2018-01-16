@@ -25,21 +25,15 @@ class LifeSpanMain extends PluginBase{
 
     public function onLoad(){
         if (self::$instance === null) {
-            // register instance
             self::$instance = $this;
-
-            // load utils
             $this->getServer()->getLoader()->loadClass('presentkim\lifespan\util\Utils');
 
-            // load default lang
             Translation::loadFromResource($this->getResource('lang/eng.yml'), true);
         }
     }
 
     public function onEnable(){
         $this->load();
-
-        // register event listeners
         $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener(), $this);
     }
 
@@ -53,11 +47,9 @@ class LifeSpanMain extends PluginBase{
             mkdir($dataFolder, 0777, true);
         }
 
-        // load db
         $this->saveDefaultConfig();
         $this->reloadConfig();
 
-        // load lang
         $langfilename = $dataFolder . 'lang.yml';
         if (!file_exists($langfilename)) {
             $resource = $this->getResource('lang/eng.yml');
@@ -68,13 +60,10 @@ class LifeSpanMain extends PluginBase{
             Translation::load($langfilename);
         }
 
-        // unregister commands
         foreach ($this->commands as $command) {
             $this->getServer()->getCommandMap()->unregister($command);
         }
         $this->commands = [];
-
-        // register commands
         $this->registerCommand(new CommandListener($this), Translation::translate('command-lifespan'), 'LifeSpan', 'lifespan.cmd', Translation::translate('command-lifespan@description'), Translation::translate('command-lifespan@usage'), Translation::getArray('command-lifespan@aliases'));
     }
 
@@ -84,7 +73,6 @@ class LifeSpanMain extends PluginBase{
             mkdir($dataFolder, 0777, true);
         }
 
-        // save db
         $this->saveConfig();
     }
 
