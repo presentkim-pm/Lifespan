@@ -9,19 +9,20 @@ permissions:
   lifespan.cmd:
     description:  LifeSpan main command
     default:      op
-  lifespan.item.cmd:
-    description:  LifeSpan item command
-    default:      op
-  lifespan.arrow.cmd:
-    description:  LifeSpan arrow command
-    default:      op
-  lifespan.lang.cmd:
-    description:  LifeSpan lang command
-    default:      op
-  lifespan.reload.cmd:
-    description:  LifeSpan reload command
-    default:      op
-  lifespan.save.cmd:
-    description:  LifeSpan save command
-    default:      op
+    children:
+      lifespan.cmd.item:
+        description:  LifeSpan command - item
+        default:      op
+      lifespan.cmd.arrow:
+        description:  LifeSpan command - arrow
+        default:      op
+      lifespan.cmd.lang:
+        description:  LifeSpan command - lang
+        default:      op
+      lifespan.cmd.reload:
+        description:  LifeSpan command - reload
+        default:      op
+      lifespan.cmd.save:
+        description:  LifeSpan command - save
+        default:      op
 ...
