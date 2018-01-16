@@ -4,24 +4,24 @@ namespace presentkim\lifespan\command\subcommands;
 
 use pocketmine\command\CommandSender;
 use presentkim\lifespan\{
-  LifeSpanMain as Plugin, util\Translation, command\SubCommand
+  command\PoolCommand, LifeSpanMain as Plugin, command\SubCommand
 };
 
 class SaveSubCommand extends SubCommand{
 
-    public function __construct(Plugin $owner){
-        parent::__construct($owner, Translation::translate('prefix'), 'command-lifespan-save', 'lifespan.save.cmd');
+    public function __construct(PoolCommand $owner){
+        parent::__construct($owner, 'save');
     }
 
     /**
      * @param CommandSender $sender
-     * @param array         $args
+     * @param String[]      $args
      *
      * @return bool
      */
-    public function onCommand(CommandSender $sender, array $args) {
-        $this->owner->save();
-        $sender->sendMessage($this->prefix . Translation::translate($this->getFullId('success')));
+    public function onCommand(CommandSender $sender, array $args){
+        $this->plugin->save();
+        $sender->sendMessage(Plugin::$prefix . $this->translate('success'));
 
         return true;
     }

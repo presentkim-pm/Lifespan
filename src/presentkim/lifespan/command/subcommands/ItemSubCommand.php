@@ -4,19 +4,19 @@ namespace presentkim\lifespan\command\subcommands;
 
 use pocketmine\command\CommandSender;
 use presentkim\lifespan\{
-  LifeSpanMain as Plugin, util\Translation, command\SubCommand
+  command\PoolCommand, LifeSpanMain as Plugin, util\Translation, command\SubCommand
 };
 use function presentkim\lifespan\util\toInt;
 
 class ItemSubCommand extends SubCommand{
 
-    public function __construct(Plugin $owner){
-        parent::__construct($owner, Translation::translate('prefix'), 'command-lifespan-item', 'lifespan.item.cmd');
+    public function __construct(PoolCommand $owner){
+        parent::__construct($owner, 'item');
     }
 
     /**
      * @param CommandSender $sender
-     * @param array         $args
+     * @param String[]      $args
      *
      * @return bool
      */
@@ -26,10 +26,10 @@ class ItemSubCommand extends SubCommand{
                 return $i >= 0;
             });
             if ($lifespan === null) {
-                $sender->sendMessage($this->prefix . Translation::translate('command-generic-failure@invalid', $args[0]));
+                $sender->sendMessage(Plugin::$prefix . Translation::translate('command-generic-failure@invalid', $args[0]));
             } else {
                 $this->owner->getConfig()->set('item-lifespan', $lifespan);
-                $sender->sendMessage($this->prefix . Translation::translate($this->getFullId('success'), $lifespan));
+                $sender->sendMessage(Plugin::$prefix . $this->translate('success', $lifespan));
             }
             return true;
         }
