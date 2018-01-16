@@ -28,7 +28,7 @@ class ArrowSubCommand extends SubCommand{
             if ($lifespan === null) {
                 $sender->sendMessage(Plugin::$prefix . Translation::translate('command-generic-failure@invalid', $args[0]));
             } else {
-                $this->owner->getConfig()->set('arrow-lifespan', $lifespan);
+                $this->plugin->getConfig()->set('arrow-lifespan', $lifespan);
                 $sender->sendMessage(Plugin::$prefix . $this->translate('success', $lifespan));
             }
             return true;
