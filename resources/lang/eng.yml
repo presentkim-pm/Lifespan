@@ -5,7 +5,8 @@ command-generic-failure@permission : "You do not have permission to use this com
 command-generic-failure@invalid : "{%0} is invalid value"
 
 command-lifespan: "lifespan"
-command-lifespan@usage: "/lifespan <item | arrow  | lang | reload | save>"
+command-lifespan@usage: "/lifespan <{%0}>"
+command-lifespan@usage-separator: " | "
 command-lifespan@description: "Main command of LifeSpan"
 command-lifespan@aliases: ["ls"]
 

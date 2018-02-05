@@ -5,7 +5,8 @@ command-generic-failure@permission : "당신은 이 명령어를 사용할 권�
 command-generic-failure@invalid : "{%0}는 잘못된 값입니다"
 
 command-lifespan: "lifespan"
-command-lifespan@usage: "/lifespan <item | arrow  | lang | reload | save>"
+command-lifespan@usage: "/lifespan <{%0}>"
+command-lifespan@usage-separator: " | "
 command-lifespan@description: "LifeSpan의 메인 명령어"
 command-lifespan@aliases: ["ls"]
 
