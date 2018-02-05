@@ -8,7 +8,7 @@
 [![Download](https://img.shields.io/github/downloads/PMMPPlugin/LifeSpan/total.svg?label=Download)](https://github.com/PMMPPlugin/LifeSpan/releases/latest)
 
 
-A plugin show custom item popup for PocketMine-MP
+A plugin control item and arrow's lifespan for PocketMine-MP
 
 ## Command
 Main command : `/lifespan <item | arrow | lang | reload | save>`
