@@ -20,7 +20,7 @@ class ItemSubCommand extends SubCommand{
      *
      * @return bool
      */
-    public function onCommand(CommandSender $sender, array $args){
+    public function onCommand(CommandSender $sender, array $args) : bool{
         if (isset($args[0])) {
             $lifespan = toInt($args[0], null, function (int $i){
                 return $i >= 0;
