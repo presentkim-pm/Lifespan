@@ -2,7 +2,7 @@
 
 namespace presentkim\lifespan\util;
 
-use presentkim\lifespan\LifeSpanMain as Plugin;
+use presentkim\lifespan\LifeSpan as Plugin;
 
 class Translation{
 

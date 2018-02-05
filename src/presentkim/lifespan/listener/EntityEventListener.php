@@ -8,7 +8,7 @@ use pocketmine\entity\{
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntitySpawnEvent;
-use presentkim\lifespan\LifeSpanMain as Plugin;
+use presentkim\lifespan\LifeSpan as Plugin;
 
 class EntityEventListener implements Listener{
 

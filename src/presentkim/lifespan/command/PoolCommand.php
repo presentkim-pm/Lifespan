@@ -5,7 +5,7 @@ namespace presentkim\lifespan\command;
 use pocketmine\command\{
   Command, PluginCommand, CommandExecutor, CommandSender, ConsoleCommandSender
 };
-use presentkim\lifespan\LifeSpanMain as Plugin;
+use presentkim\lifespan\LifeSpan as Plugin;
 use presentkim\lifespan\util\Translation;
 
 class PoolCommand extends PluginCommand implements CommandExecutor{

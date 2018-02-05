@@ -3,7 +3,7 @@
 namespace presentkim\lifespan\command\subcommands;
 
 use pocketmine\command\CommandSender;
-use presentkim\lifespan\LifeSpanMain as Plugin;
+use presentkim\lifespan\LifeSpan as Plugin;
 use presentkim\lifespan\command\{
   PoolCommand, SubCommand
 };

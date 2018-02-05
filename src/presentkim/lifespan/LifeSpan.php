@@ -10,7 +10,7 @@ use presentkim\lifespan\command\subcommands\{
 use presentkim\lifespan\util\Translation;
 use presentkim\lifespan\listener\EntityEventListener;
 
-class LifeSpanMain extends PluginBase{
+class LifeSpan extends PluginBase{
 
     /** @var self */
     private static $instance = null;
