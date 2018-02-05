@@ -4,9 +4,8 @@ namespace presentkim\lifespan\command\subcommands;
 
 use pocketmine\command\CommandSender;
 use presentkim\lifespan\{
-  command\PoolCommand, LifeSpanMain as Plugin, util\Translation, command\SubCommand
+  command\PoolCommand, LifeSpanMain as Plugin, util\Translation, command\SubCommand, util\Utils
 };
-use function presentkim\lifespan\util\toInt;
 
 class ItemSubCommand extends SubCommand{
 
@@ -22,7 +21,7 @@ class ItemSubCommand extends SubCommand{
      */
     public function onCommand(CommandSender $sender, array $args) : bool{
         if (isset($args[0])) {
-            $lifespan = toInt($args[0], null, function (int $i){
+            $lifespan = Utils::toInt($args[0], null, function (int $i){
                 return $i >= 0;
             });
             if ($lifespan === null) {
