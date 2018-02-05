@@ -3,11 +3,11 @@
 namespace presentkim\lifespan\listener;
 
 use pocketmine\entity\{
-  Entity, Item, projectile\Arrow
+  Entity, Item
 };
-use pocketmine\event\{
-  entity\EntitySpawnEvent, Listener
-};
+use pocketmine\entity\projectile\Arrow;
+use pocketmine\event\Listener;
+use pocketmine\event\entity\EntitySpawnEvent;
 use presentkim\lifespan\LifeSpanMain as Plugin;
 
 class EntityEventListener implements Listener{

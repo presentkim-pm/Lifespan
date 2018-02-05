@@ -3,8 +3,9 @@
 namespace presentkim\lifespan\command;
 
 use pocketmine\command\CommandSender;
-use presentkim\lifespan\{
-  LifeSpanMain as Plugin, util\Translation, util\Utils
+use presentkim\lifespan\LifeSpanMain as Plugin;
+use presentkim\lifespan\util\{
+  Translation, Utils
 };
 
 abstract class SubCommand{

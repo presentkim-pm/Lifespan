@@ -3,12 +3,12 @@
 namespace presentkim\lifespan;
 
 use pocketmine\plugin\PluginBase;
-use presentkim\lifespan\util\Translation;
-use presentkim\lifespan\listener\EntityEventListener;
 use presentkim\lifespan\command\PoolCommand;
 use presentkim\lifespan\command\subcommands\{
   ItemSubCommand, ArrowSubCommand, LangSubCommand, ReloadSubCommand, SaveSubCommand
 };
+use presentkim\lifespan\util\Translation;
+use presentkim\lifespan\listener\EntityEventListener;
 
 class LifeSpanMain extends PluginBase{
 

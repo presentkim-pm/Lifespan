@@ -3,8 +3,9 @@
 namespace presentkim\lifespan\command\subcommands;
 
 use pocketmine\command\CommandSender;
-use presentkim\lifespan\{
-  command\PoolCommand, LifeSpanMain as Plugin, command\SubCommand
+use presentkim\lifespan\LifeSpanMain as Plugin;
+use presentkim\lifespan\command\{
+  PoolCommand, SubCommand
 };
 
 class SaveSubCommand extends SubCommand{

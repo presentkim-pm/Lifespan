@@ -3,8 +3,12 @@
 namespace presentkim\lifespan\command\subcommands;
 
 use pocketmine\command\CommandSender;
-use presentkim\lifespan\{
-  command\PoolCommand, LifeSpanMain as Plugin, util\Translation, command\SubCommand, util\Utils
+use presentkim\lifespan\LifeSpanMain as Plugin;
+use presentkim\lifespan\command\{
+  PoolCommand, SubCommand
+};
+use presentkim\lifespan\util\{
+  Translation, Utils
 };
 
 class ItemSubCommand extends SubCommand{
