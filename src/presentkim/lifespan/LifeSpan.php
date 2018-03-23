@@ -12,14 +12,14 @@ use presentkim\lifespan\listener\EntityEventListener;
 
 class LifeSpan extends PluginBase{
 
-    /** @var self */
+    /** @var LifeSpan */
     private static $instance = null;
 
     /** @var string */
     public static $prefix = '';
 
-    /** @return self */
-    public static function getInstance() : self{
+    /** @return LifeSpan */
+    public static function getInstance() : LifeSpan{
         return self::$instance;
     }
 
