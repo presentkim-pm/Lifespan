@@ -2,9 +2,8 @@
 
 namespace blugin\lifespan\listener;
 
-use pocketmine\entity\{
-  Entity, Item
-};
+use pocketmine\entity\Entity;
+use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntitySpawnEvent;
@@ -29,7 +28,7 @@ class EntityEventListener implements Listener{
     /** @param EntitySpawnEvent $event */
     public function onEntitySpawnEvent(EntitySpawnEvent $event){
         $entity = $event->getEntity();
-        if ($entity instanceof Item) {
+        if ($entity instanceof ItemEntity) {
             $this->property->setValue($entity, (int) (6000 - ((float) $this->owner->getConfig()->get('item-lifespan')) * 20));
         } elseif ($entity instanceof Arrow) {
             $this->property->setValue($entity, (int) (1200 - ((float) $this->owner->getConfig()->get('arrow-lifespan')) * 20));
