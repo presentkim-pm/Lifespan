@@ -2,15 +2,18 @@
 
 namespace blugin\lifespan;
 
-use pocketmine\plugin\PluginBase;
-use blugin\lifespan\command\PoolCommand;
-use blugin\lifespan\command\subcommands\{
-  ItemSubCommand, ArrowSubCommand, LangSubCommand, ReloadSubCommand, SaveSubCommand
+use pocketmine\command\{
+  Command, PluginCommand, CommandExecutor, CommandSender
 };
-use blugin\lifespan\util\Translation;
+use pocketmine\plugin\PluginBase;
+use blugin\lifespan\lang\PluginLang;
 use blugin\lifespan\listener\EntityEventListener;
 
-class LifeSpan extends PluginBase{
+class LifeSpan extends PluginBase implements CommandExecutor{
+
+    public const INVALID_TYPE = -1;
+    public const ITEM_TYPE = 0;
+    public const ARROW_TYPE = 1;
 
     /** @var LifeSpan */
     private static $instance = null;
@@ -20,53 +23,53 @@ class LifeSpan extends PluginBase{
         return self::$instance;
     }
 
-    /** @var PoolCommand */
+    /** @var PluginCommand */
     private $command;
 
     /** @var PluginLang */
     private $language;
 
+    /** @var string[] */
+    private $typeMap = [];
+
     public function onLoad() : void{
-        if (self::$instance === null) {
-            self::$instance = $this;
-            Translation::loadFromResource($this->getResource('lang/eng.yml'), true);
-        }
+        self::$instance = $this;
     }
 
     public function onEnable() : void{
-        $this->load();
-        $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener(), $this);
-    }
-
-    public function onDisable(){
-        $this->save();
-    }
-
-    public function load() : void{
         $dataFolder = $this->getDataFolder();
         if (!file_exists($dataFolder)) {
             mkdir($dataFolder, 0777, true);
         }
         $this->reloadConfig();
-
         $this->language = new PluginLang($this);
-        if ($this->command == null) {
-            $this->command = new PoolCommand($this, 'lifespan');
-            $this->command->createSubCommand(ItemSubCommand::class);
-            $this->command->createSubCommand(ArrowSubCommand::class);
-            $this->command->createSubCommand(LangSubCommand::class);
-            $this->command->createSubCommand(ReloadSubCommand::class);
-            $this->command->createSubCommand(SaveSubCommand::class);
+
+        $this->typeMap = [];
+        $this->typeMap[strtolower($this->language->translate('commands.lifespan.item'))] = self::ITEM_TYPE;
+        foreach ($this->language->getArray('commands.lifespan.item.aliases') as $key => $aliases) {
+            $this->typeMap[strtolower($aliases)] = self::ITEM_TYPE;
         }
-        $this->command->updateTranslation();
-        $this->command->updateSudCommandTranslation();
-        if ($this->command->isRegistered()) {
+        $this->typeMap[strtolower($this->language->translate('commands.lifespan.arrow'))] = self::ARROW_TYPE;
+        foreach ($this->language->getArray('commands.lifespan.arrow.aliases') as $key => $aliases) {
+            $this->typeMap[strtolower($aliases)] = self::ARROW_TYPE;
+        }
+
+        if ($this->command !== null) {
             $this->getServer()->getCommandMap()->unregister($this->command);
         }
-        $this->getServer()->getCommandMap()->register(strtolower($this->getName()), $this->command);
+        $this->command = new PluginCommand($this->language->translate('commands.lifespan'), $this);
+        $this->command->setPermission('lifespan.cmd');
+        $this->command->setDescription($this->language->translate('commands.lifespan.description'));
+        $this->command->setUsage($this->language->translate('commands.lifespan.usage'));
+        if (is_array($aliases = $this->language->getArray('commands.lifespan.aliases'))) {
+            $this->command->setAliases($aliases);
+        }
+        $this->getServer()->getCommandMap()->register('lifespan', $this->command);
+
+        $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener(), $this);
     }
 
-    public function save() : void{
+    public function onDisable(){
         $dataFolder = $this->getDataFolder();
         if (!file_exists($dataFolder)) {
             mkdir($dataFolder, 0777, true);
@@ -74,12 +77,55 @@ class LifeSpan extends PluginBase{
 
         $this->saveConfig();
     }
+
+    /**
+     * @param CommandSender $sender
+     * @param Command       $command
+     * @param string        $label
+     * @param string[]      $args
+     *
+     * @return bool
+     */
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
+        if (isset($args[1])) {
+            if (!is_numeric($args[1])) {
+                $sender->sendMessage($this->language->translate('commands.generic.num.notNumber', [$args[1]]));
+            } else {
+                $lifespan = (float) $args[1];
+                if ($lifespan < 0) {
+                    $sender->sendMessage($this->language->translate('commands.generic.num.tooSmall', [
+                      $lifespan,
+                      0,
+                    ]));
+                } elseif ($lifespan > 9999) {
+                    $sender->sendMessage($this->language->translate('commands.generic.num.tooBig', [
+                      $lifespan,
+                      9999,
+                    ]));
+                } else {
+                    $type = $this->typeMap[strtolower($args[0])] ?? self::INVALID_TYPE;
+                    if ($type === self::INVALID_TYPE) {
+                        $sender->sendMessage($this->language->translate('commands.lifespan.failure.invalid', [$args[0]]));
+                    } else {
+                        $this->getConfig()->set(($type ? 'arrow' : 'item') . '-lifespan', $lifespan);
+                        $sender->sendMessage($this->language->translate('commands.lifespan.success', [
+                          $this->language->translate('commands.lifespan.' . ($type ? 'arrow' : 'item')),
+                          $lifespan,
+                        ]));
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @param string $name = ''
      *
-     * @return PoolCommand
+     * @return PluginCommand
      */
-    public function getCommand(string $name = '') : PoolCommand{
+    public function getCommand(string $name = '') : PluginCommand{
         return $this->command;
     }
 
