@@ -1,12 +1,12 @@
 <?php
 
-namespace presentkim\lifespan\command;
+namespace blugin\lifespan\command;
 
 use pocketmine\command\{
   Command, PluginCommand, CommandExecutor, CommandSender, ConsoleCommandSender
 };
-use presentkim\lifespan\LifeSpan as Plugin;
-use presentkim\lifespan\util\Translation;
+use blugin\lifespan\LifeSpan as Plugin;
+use blugin\lifespan\util\Translation;
 
 class PoolCommand extends PluginCommand implements CommandExecutor{
 

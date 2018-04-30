@@ -1,6 +1,6 @@
 <?php
 
-namespace presentkim\lifespan\listener;
+namespace blugin\lifespan\listener;
 
 use pocketmine\entity\{
   Entity, Item
@@ -8,7 +8,7 @@ use pocketmine\entity\{
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntitySpawnEvent;
-use presentkim\lifespan\LifeSpan as Plugin;
+use blugin\lifespan\LifeSpan as Plugin;
 
 class EntityEventListener implements Listener{
 

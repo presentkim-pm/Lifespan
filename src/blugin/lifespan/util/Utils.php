@@ -1,6 +1,6 @@
 <?php
 
-namespace presentkim\lifespan\util;
+namespace blugin\lifespan\util;
 
 class Utils{
 

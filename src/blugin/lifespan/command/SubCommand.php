@@ -1,10 +1,10 @@
 <?php
 
-namespace presentkim\lifespan\command;
+namespace blugin\lifespan\command;
 
 use pocketmine\command\CommandSender;
-use presentkim\lifespan\LifeSpan as Plugin;
-use presentkim\lifespan\util\{
+use blugin\lifespan\LifeSpan as Plugin;
+use blugin\lifespan\util\{
   Translation, Utils
 };
 

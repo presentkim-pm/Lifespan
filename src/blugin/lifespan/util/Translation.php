@@ -1,8 +1,8 @@
 <?php
 
-namespace presentkim\lifespan\util;
+namespace blugin\lifespan\util;
 
-use presentkim\lifespan\LifeSpan as Plugin;
+use blugin\lifespan\LifeSpan as Plugin;
 
 class Translation{
 

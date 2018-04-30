@@ -1,14 +1,14 @@
 <?php
 
-namespace presentkim\lifespan;
+namespace blugin\lifespan;
 
 use pocketmine\plugin\PluginBase;
-use presentkim\lifespan\command\PoolCommand;
-use presentkim\lifespan\command\subcommands\{
+use blugin\lifespan\command\PoolCommand;
+use blugin\lifespan\command\subcommands\{
   ItemSubCommand, ArrowSubCommand, LangSubCommand, ReloadSubCommand, SaveSubCommand
 };
-use presentkim\lifespan\util\Translation;
-use presentkim\lifespan\listener\EntityEventListener;
+use blugin\lifespan\util\Translation;
+use blugin\lifespan\listener\EntityEventListener;
 
 class LifeSpan extends PluginBase{
 
