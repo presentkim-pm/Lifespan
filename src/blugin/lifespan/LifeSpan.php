@@ -15,9 +15,6 @@ class LifeSpan extends PluginBase{
     /** @var LifeSpan */
     private static $instance = null;
 
-    /** @var string */
-    public static $prefix = '';
-
     /** @return LifeSpan */
     public static function getInstance() : LifeSpan{
         return self::$instance;
@@ -25,6 +22,9 @@ class LifeSpan extends PluginBase{
 
     /** @var PoolCommand */
     private $command;
+
+    /** @var PluginLang */
+    private $language;
 
     public function onLoad() : void{
         if (self::$instance === null) {
@@ -47,33 +47,9 @@ class LifeSpan extends PluginBase{
         if (!file_exists($dataFolder)) {
             mkdir($dataFolder, 0777, true);
         }
-
         $this->reloadConfig();
 
-        $langfilename = $dataFolder . 'lang.yml';
-        if (!file_exists($langfilename)) {
-            $resource = $this->getResource('lang/eng.yml');
-            fwrite($fp = fopen("{$dataFolder}lang.yml", "wb"), $contents = stream_get_contents($resource));
-            fclose($fp);
-            Translation::loadFromContents($contents);
-        } else {
-            Translation::load($langfilename);
-        }
-
-        self::$prefix = Translation::translate('prefix');
-        $this->reloadCommand();
-    }
-
-    public function save() : void{
-        $dataFolder = $this->getDataFolder();
-        if (!file_exists($dataFolder)) {
-            mkdir($dataFolder, 0777, true);
-        }
-
-        $this->saveConfig();
-    }
-
-    public function reloadCommand() : void{
+        $this->language = new PluginLang($this);
         if ($this->command == null) {
             $this->command = new PoolCommand($this, 'lifespan');
             $this->command->createSubCommand(ItemSubCommand::class);
@@ -90,6 +66,14 @@ class LifeSpan extends PluginBase{
         $this->getServer()->getCommandMap()->register(strtolower($this->getName()), $this->command);
     }
 
+    public function save() : void{
+        $dataFolder = $this->getDataFolder();
+        if (!file_exists($dataFolder)) {
+            mkdir($dataFolder, 0777, true);
+        }
+
+        $this->saveConfig();
+    }
     /**
      * @param string $name = ''
      *
@@ -99,8 +83,22 @@ class LifeSpan extends PluginBase{
         return $this->command;
     }
 
-    /** @param PoolCommand $command */
-    public function setCommand(PoolCommand $command) : void{
-        $this->command = $command;
+    /**
+     * @return PluginLang
+     */
+    public function getLanguage() : PluginLang{
+        return $this->language;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceFolder() : string{
+        $pharPath = \Phar::running();
+        if (empty($pharPath)) {
+            return dirname(__FILE__, 4) . DIRECTORY_SEPARATOR;
+        } else {
+            return $pharPath . DIRECTORY_SEPARATOR;
+        }
     }
 }
