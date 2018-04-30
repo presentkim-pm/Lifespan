@@ -7,30 +7,11 @@
 A plugin control item and arrow's lifespan for PocketMine-MP
 
 ## Command
-Main command : `/lifespan <item | arrow | lang | reload | save>`
-
-| subcommand | arguments           | description            |
-| ---------- | ------------------- | ---------------------- |
-| Item       | \<tick\>            | Set item's lifespan    |
-| Arrow      | \<tick\>            | Set arrow's lifespan   |
-| Lang       | \<language prefix\> | Load default lang file |
-| Reload     |                     | Reload all data        |
-| Save       |                     | Save all data          |
-  
-<br/><br/>
-  
-## Permission
-| permission          | default | description       |
-| ------------------- | ------- | ----------------- |
-| lifespan.cmd        | OP      | main command      |
-|                     |         |                   |
-| lifespan.cmd.item   | OP      | item  subcommand  |
-| lifespan.cmd.arrow  | OP      | arrow subcommand  |
-| lifespan.cmd.lang   | OP      | lang subcommand   |
-| lifespan.cmd.reload | OP      | reload subcommand |
-| lifespan.cmd.save   | OP      | save subcommand   |
+| name     | arguments                  | description             | permission        |
+| :------: | :------------------------: | :---------------------: | :---------------: |
+| lifespan |  <item / arrow> <lifespan> | Set entity's lifespan   | `OP` lifespan.cmd |
   
 <br/><br/>
   
 ## Required API
-- PocketMine-MP : higher than [Build #937](https://jenkins.pmmp.io/job/PocketMine-MP/937)
+- PocketMine-MP : higher than [Build #501](https://jenkins.pmmp.io/job/PocketMine-MP/501)
