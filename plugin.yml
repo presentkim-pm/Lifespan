@@ -9,22 +9,6 @@ description:      A plugin control item and arrow's lifespan
 
 permissions:
   lifespan.cmd:
-    description:  LifeSpan main command
+    description:  "Set entity's lifespan"
     default:      op
-    children:
-      lifespan.cmd.item:
-        description:  LifeSpan command - item
-        default:      op
-      lifespan.cmd.arrow:
-        description:  LifeSpan command - arrow
-        default:      op
-      lifespan.cmd.lang:
-        description:  LifeSpan command - lang
-        default:      op
-      lifespan.cmd.reload:
-        description:  LifeSpan command - reload
-        default:      op
-      lifespan.cmd.save:
-        description:  LifeSpan command - save
-        default:      op
 ...
