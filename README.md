@@ -1,5 +1,5 @@
 # LifeSpan [![license](https://img.shields.io/github/license/Blugin/LifeSpan-PMMP.svg?label=License)](LICENSE)
-[![icon](assets/icon/192x192.png?raw=true)]()  
+<img src="./assets/icon/index.svg" height="256" width="256">  
 
 [![release](https://img.shields.io/github/release/Blugin/LifeSpan-PMMP.svg?label=Release)](https://github.com/Blugin/LifeSpan-PMMP/releases/latest) [![download](https://img.shields.io/github/downloads/Blugin/LifeSpan-PMMP/total.svg?label=Download)](https://github.com/Blugin/LifeSpan-PMMP/releases/latest)
 
