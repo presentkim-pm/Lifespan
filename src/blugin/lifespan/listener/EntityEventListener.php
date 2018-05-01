@@ -19,8 +19,8 @@ class EntityEventListener implements Listener{
     /** @var \ReflectionProperty */
     private $property = null;
 
-    public function __construct(){
-        $this->owner = LifeSpan::getInstance();
+    public function __construct(LifeSpan $owner){
+        $this->owner = $owner;
 
         $reflection = new \ReflectionClass(Entity::class);
         $this->property = $reflection->getProperty('age');

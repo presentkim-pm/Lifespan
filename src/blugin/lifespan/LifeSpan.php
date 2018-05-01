@@ -68,7 +68,7 @@ class LifeSpan extends PluginBase implements CommandExecutor{
         }
         $this->getServer()->getCommandMap()->register('lifespan', $this->command);
 
-        $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
     }
 
     public function onDisable(){
