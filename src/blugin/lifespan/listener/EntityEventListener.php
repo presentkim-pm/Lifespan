@@ -7,18 +7,18 @@ use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntitySpawnEvent;
-use blugin\lifespan\LifeSpan as Plugin;
+use blugin\lifespan\LifeSpan;
 
 class EntityEventListener implements Listener{
 
-    /** @var Plugin */
+    /** @var LifeSpan */
     private $owner = null;
 
     /** @var \ReflectionProperty */
     private $property = null;
 
     public function __construct(){
-        $this->owner = Plugin::getInstance();
+        $this->owner = LifeSpan::getInstance();
 
         $reflection = new \ReflectionClass(Entity::class);
         $this->property = $reflection->getProperty('age');
