@@ -1,14 +1,14 @@
 ---
-name:             LifeSpan
-main:             blugin\lifespan\LifeSpan
+name:             Lifetime
+main:             blugin\lifetime\Lifetime
 version:          1.1.2
 api:              [3.0.0, 3.0.0-ALPHA10, 3.0.0-ALPHA11, 3.0.0-ALPHA12]
 author:           PresentKim
-website:          https://github.com/Blugin/LifeSpan-PMMP
-description:      A plugin control item and arrow's lifespan
+website:          https://github.com/Blugin/Lifetime-PMMP
+description:      A plugin control item and arrow's lifetime
 
 permissions:
-  lifespan.cmd:
-    description:  "Set entity's lifespan"
+  lifetime.cmd:
+    description:  "Set entity's lifetime"
     default:      op
 ...

@@ -1,4 +1,4 @@
 ---
-item-lifespan: 6000
-arrow-lifespan: 1200
+item-lifetime: 6000
+arrow-lifetime: 1200
 ...

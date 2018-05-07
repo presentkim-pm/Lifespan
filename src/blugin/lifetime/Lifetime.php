@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifespan;
+namespace blugin\lifetime;
 
 use pocketmine\command\{
   Command, PluginCommand, CommandExecutor, CommandSender
 };
 use pocketmine\plugin\PluginBase;
-use blugin\lifespan\lang\PluginLang;
-use blugin\lifespan\listener\EntityEventListener;
+use blugin\lifetime\lang\PluginLang;
+use blugin\lifetime\listener\EntityEventListener;
 
-class LifeSpan extends PluginBase implements CommandExecutor{
+class Lifetime extends PluginBase implements CommandExecutor{
 
     public const INVALID_TYPE = -1;
     public const ITEM_TYPE = 0;
     public const ARROW_TYPE = 1;
 
-    /** @var LifeSpan */
+    /** @var Lifetime */
     private static $instance = null;
 
-    /** @return LifeSpan */
-    public static function getInstance() : LifeSpan{
+    /** @return Lifetime */
+    public static function getInstance() : Lifetime{
         return self::$instance;
     }
 
@@ -47,26 +47,26 @@ class LifeSpan extends PluginBase implements CommandExecutor{
         $this->language = new PluginLang($this);
 
         $this->typeMap = [];
-        $this->typeMap[strtolower($this->language->translate('commands.lifespan.item'))] = self::ITEM_TYPE;
-        foreach ($this->language->getArray('commands.lifespan.item.aliases') as $key => $aliases) {
+        $this->typeMap[strtolower($this->language->translate('commands.lifetime.item'))] = self::ITEM_TYPE;
+        foreach ($this->language->getArray('commands.lifetime.item.aliases') as $key => $aliases) {
             $this->typeMap[strtolower($aliases)] = self::ITEM_TYPE;
         }
-        $this->typeMap[strtolower($this->language->translate('commands.lifespan.arrow'))] = self::ARROW_TYPE;
-        foreach ($this->language->getArray('commands.lifespan.arrow.aliases') as $key => $aliases) {
+        $this->typeMap[strtolower($this->language->translate('commands.lifetime.arrow'))] = self::ARROW_TYPE;
+        foreach ($this->language->getArray('commands.lifetime.arrow.aliases') as $key => $aliases) {
             $this->typeMap[strtolower($aliases)] = self::ARROW_TYPE;
         }
 
         if ($this->command !== null) {
             $this->getServer()->getCommandMap()->unregister($this->command);
         }
-        $this->command = new PluginCommand($this->language->translate('commands.lifespan'), $this);
-        $this->command->setPermission('lifespan.cmd');
-        $this->command->setDescription($this->language->translate('commands.lifespan.description'));
-        $this->command->setUsage($this->language->translate('commands.lifespan.usage'));
-        if (is_array($aliases = $this->language->getArray('commands.lifespan.aliases'))) {
+        $this->command = new PluginCommand($this->language->translate('commands.lifetime'), $this);
+        $this->command->setPermission('lifetime.cmd');
+        $this->command->setDescription($this->language->translate('commands.lifetime.description'));
+        $this->command->setUsage($this->language->translate('commands.lifetime.usage'));
+        if (is_array($aliases = $this->language->getArray('commands.lifetime.aliases'))) {
             $this->command->setAliases($aliases);
         }
-        $this->getServer()->getCommandMap()->register('lifespan', $this->command);
+        $this->getServer()->getCommandMap()->register('lifetime', $this->command);
 
         $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
     }
@@ -93,26 +93,26 @@ class LifeSpan extends PluginBase implements CommandExecutor{
             if (!is_numeric($args[1])) {
                 $sender->sendMessage($this->language->translate('commands.generic.num.notNumber', [$args[1]]));
             } else {
-                $lifespan = (float) $args[1];
-                if ($lifespan < 0) {
+                $lifetime = (float) $args[1];
+                if ($lifetime < 0) {
                     $sender->sendMessage($this->language->translate('commands.generic.num.tooSmall', [
-                      $lifespan,
+                      $lifetime,
                       0,
                     ]));
-                } elseif ($lifespan > 9999) {
+                } elseif ($lifetime > 9999) {
                     $sender->sendMessage($this->language->translate('commands.generic.num.tooBig', [
-                      $lifespan,
+                      $lifetime,
                       9999,
                     ]));
                 } else {
                     $type = $this->typeMap[strtolower($args[0])] ?? self::INVALID_TYPE;
                     if ($type === self::INVALID_TYPE) {
-                        $sender->sendMessage($this->language->translate('commands.lifespan.failure.invalid', [$args[0]]));
+                        $sender->sendMessage($this->language->translate('commands.lifetime.failure.invalid', [$args[0]]));
                     } else {
-                        $this->getConfig()->set(($type ? 'arrow' : 'item') . '-lifespan', $lifespan);
-                        $sender->sendMessage($this->language->translate('commands.lifespan.success', [
-                          $this->language->translate('commands.lifespan.' . ($type ? 'arrow' : 'item')),
-                          $lifespan,
+                        $this->getConfig()->set(($type ? 'arrow' : 'item') . '-lifetime', $lifetime);
+                        $sender->sendMessage($this->language->translate('commands.lifetime.success', [
+                          $this->language->translate('commands.lifetime.' . ($type ? 'arrow' : 'item')),
+                          $lifetime,
                         ]));
                     }
                 }

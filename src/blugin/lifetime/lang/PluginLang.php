@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifespan\lang;
+namespace blugin\lifetime\lang;
 
-use blugin\lifespan\LifeSpan;
+use blugin\lifetime\Lifetime;
 
 class PluginLang{
 
@@ -25,7 +25,7 @@ class PluginLang{
      */
     protected $fallbackLang = [];
 
-    public function __construct(LifeSpan $plugin){
+    public function __construct(Lifetime $plugin){
         $this->plugin = $plugin;
 
         $fallbackLangResource = "{$plugin->getSourceFolder()}resources/lang/eng.ini";

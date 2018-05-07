@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifespan\listener;
+namespace blugin\lifetime\listener;
 
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntitySpawnEvent;
-use blugin\lifespan\LifeSpan;
+use blugin\lifetime\Lifetime;
 
 class EntityEventListener implements Listener{
 
-    /** @var LifeSpan */
+    /** @var Lifetime */
     private $owner = null;
 
     /** @var \ReflectionProperty */
     private $property = null;
 
-    public function __construct(LifeSpan $owner){
+    public function __construct(Lifetime $owner){
         $this->owner = $owner;
 
         $reflection = new \ReflectionClass(Entity::class);
@@ -31,9 +31,9 @@ class EntityEventListener implements Listener{
     public function onEntitySpawnEvent(EntitySpawnEvent $event){
         $entity = $event->getEntity();
         if ($entity instanceof ItemEntity) {
-            $this->property->setValue($entity, (int) (6000 - ((float) $this->owner->getConfig()->get('item-lifespan')) * 20));
+            $this->property->setValue($entity, (int) (6000 - ((float) $this->owner->getConfig()->get('item-lifetime')) * 20));
         } elseif ($entity instanceof Arrow) {
-            $this->property->setValue($entity, (int) (1200 - ((float) $this->owner->getConfig()->get('arrow-lifespan')) * 20));
+            $this->property->setValue($entity, (int) (1200 - ((float) $this->owner->getConfig()->get('arrow-lifetime')) * 20));
         }
     }
 }
