@@ -4,7 +4,7 @@ main:             kim\present\lifetime\Lifetime
 version:          1.1.2
 api:              [3.0.0, 3.0.0-ALPHA10, 3.0.0-ALPHA11, 3.0.0-ALPHA12]
 author:           PresentKim
-website:          https://github.com/Blugin/Lifetime-PMMP
+website:          https://github.com/PresentKim/Lifetime-PMMP
 description:      A plugin control item and arrow's lifetime
 
 permissions:
