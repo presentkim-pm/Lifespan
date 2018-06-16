@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifetime\listener;
+namespace kim\present\lifetime\listener;
 
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntitySpawnEvent;
-use blugin\lifetime\Lifetime;
+use kim\present\lifetime\Lifetime;
 
 class EntityEventListener implements Listener{
 
