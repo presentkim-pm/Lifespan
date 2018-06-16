@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifetime\lang;
+namespace kim\present\lifetime\lang;
 
-use blugin\lifetime\Lifetime;
+use kim\present\lifetime\Lifetime;
 
 class PluginLang{
 

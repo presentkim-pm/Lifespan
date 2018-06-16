@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifetime;
+namespace kim\present\lifetime;
 
 use pocketmine\command\{
   Command, PluginCommand, CommandExecutor, CommandSender
 };
 use pocketmine\plugin\PluginBase;
-use blugin\lifetime\lang\PluginLang;
-use blugin\lifetime\listener\EntityEventListener;
+use kim\present\lifetime\lang\PluginLang;
+use kim\present\lifetime\listener\EntityEventListener;
 
 class Lifetime extends PluginBase implements CommandExecutor{
 
