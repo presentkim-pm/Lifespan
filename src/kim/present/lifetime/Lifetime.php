@@ -83,7 +83,7 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	 * Called when the plugin is disabled
 	 * Use this to free open things and finish actions
 	 */
-	public function onDisable(){
+	public function onDisable() : void{
 		$dataFolder = $this->getDataFolder();
 		if(!file_exists($dataFolder)){
 			mkdir($dataFolder, 0777, true);

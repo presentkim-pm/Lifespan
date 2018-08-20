@@ -35,7 +35,7 @@ class EntityEventListener implements Listener{
 	/**
 	 * @param EntitySpawnEvent $event
 	 */
-	public function onEntitySpawnEvent(EntitySpawnEvent $event){
+	public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
 		$entity = $event->getEntity();
 		if($entity instanceof ItemEntity){
 			$this->property->setValue($entity, (int) (6000 - ((float) $this->owner->getConfig()->get("item-lifetime")) * 20));
