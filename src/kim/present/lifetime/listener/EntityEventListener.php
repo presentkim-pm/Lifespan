@@ -12,7 +12,6 @@ use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
 
 class EntityEventListener implements Listener{
-
 	/** @var Lifetime */
 	private $owner = null;
 

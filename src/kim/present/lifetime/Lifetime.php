@@ -12,7 +12,6 @@ use pocketmine\command\{
 use pocketmine\plugin\PluginBase;
 
 class Lifetime extends PluginBase implements CommandExecutor{
-
 	public const INVALID_TYPE = -1;
 	public const ITEM_TYPE = 0;
 	public const ARROW_TYPE = 1;
