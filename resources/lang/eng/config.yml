@@ -1,0 +1,34 @@
+# Advanced configuration file for Lifetime plugin
+# Some of these settings are safe, others can break your server if modified incorrectly
+# New settings/defaults won't appear automatically on this file when upgrading
+
+settings:
+  #Multi-language setting
+  #Available: eng, kor
+  language: "eng"
+
+
+command:
+  #Name of main command
+  #You can change this to be what you want
+  name: "lifetime"
+
+  #Aliases of main command
+  #You can add, replace, or remove them as you like
+  aliases: ["lifetime", "lt", "lifespan"]
+
+  children:
+    #Setting of subcommands
+    #Same as main command setting
+    item:
+      name: "Item"
+      aliases: ["i", "itementity"]
+    arrow:
+      name: "Arrow"
+      aliases: ["a", "arrowentity"]
+
+
+permission:
+  #Permission of main command
+  #You can change this to be what you want
+  main: "op"

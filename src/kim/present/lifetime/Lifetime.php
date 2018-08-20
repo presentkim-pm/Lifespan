@@ -9,6 +9,9 @@ use kim\present\lifetime\listener\EntityEventListener;
 use pocketmine\command\{
 	Command, CommandExecutor, CommandSender, PluginCommand
 };
+use pocketmine\permission\{
+	Permission, PermissionManager
+};
 use pocketmine\plugin\PluginBase;
 
 class Lifetime extends PluginBase implements CommandExecutor{
@@ -32,7 +35,7 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	/** @var PluginLang */
 	private $language;
 
-	/** @var string[] */
+	/** @var int[string] */
 	private $typeMap = [];
 
 	/**
@@ -46,35 +49,45 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	 * Called when the plugin is enabled
 	 */
 	public function onEnable() : void{
-		$dataFolder = $this->getDataFolder();
-		if(!file_exists($dataFolder)){
-			mkdir($dataFolder, 0777, true);
-		}
-		$this->reloadConfig();
-		$this->language = new PluginLang($this);
+		//Save default resources
+		$this->saveResource("lang/eng/lang.ini", false);
+		$this->saveResource("lang/kor/lang.ini", false);
+		$this->saveResource("lang/language.list", false);
 
+		//Load config file
+		$config = $this->getConfig();
+
+		//Load type map from config file
 		$this->typeMap = [];
-		$this->typeMap[strtolower($this->language->translate("commands.lifetime.item"))] = self::ITEM_TYPE;
-		foreach($this->language->getArray("commands.lifetime.item.aliases") as $key => $aliases){
+		$this->typeMap[strtolower($config->getNested("command.children.item.name"))] = self::ITEM_TYPE;
+		foreach($config->getNested("command.children.item.aliases") as $key => $aliases){
 			$this->typeMap[strtolower($aliases)] = self::ITEM_TYPE;
 		}
-		$this->typeMap[strtolower($this->language->translate("commands.lifetime.arrow"))] = self::ARROW_TYPE;
-		foreach($this->language->getArray("commands.lifetime.arrow.aliases") as $key => $aliases){
+		$this->typeMap[strtolower($config->getNested("command.children.arrow.name"))] = self::ARROW_TYPE;
+		foreach($config->getNested("command.children.arrow.aliases") as $key => $aliases){
 			$this->typeMap[strtolower($aliases)] = self::ARROW_TYPE;
 		}
 
-		if($this->command !== null){
-			$this->getServer()->getCommandMap()->unregister($this->command);
-		}
-		$this->command = new PluginCommand($this->language->translate("commands.lifetime"), $this);
-		$this->command->setPermission("lifetime.cmd");
-		$this->command->setDescription($this->language->translate("commands.lifetime.description"));
-		$this->command->setUsage($this->language->translate("commands.lifetime.usage"));
-		if(is_array($aliases = $this->language->getArray("commands.lifetime.aliases"))){
-			$this->command->setAliases($aliases);
-		}
-		$this->getServer()->getCommandMap()->register("lifetime", $this->command);
+		//Load language file
+		$this->language = new PluginLang($this, $config->getNested("settings.language"));
+		$this->getLogger()->info($this->language->translate("language.selected", [$this->language->getName(), $this->language->getLang()]));
 
+		//Register main command
+		$this->command = new PluginCommand($config->getNested("command.name"), $this);
+		$this->command->setPermission("lifetime.cmd");
+		$this->command->setAliases($config->getNested("command.aliases"));
+		$this->command->setUsage($this->language->translate("commands.lifetime.usage"));
+		$this->command->setDescription($this->language->translate("commands.lifetime.description"));
+		$this->getServer()->getCommandMap()->register($this->getName(), $this->command);
+
+		//Load permission's default value from config
+		$permission = PermissionManager::getInstance()->getPermission("lifetime.cmd");
+		$defaultValue = $config->getNested("permission.main");
+		if($permission !== null && $defaultValue !== null){
+			$permission->setDefault(Permission::getByName($config->getNested("permission.main")));
+		}
+
+		//Register event listeners
 		try{
 			$this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
 		}catch(\ReflectionException $e){
@@ -110,25 +123,17 @@ class Lifetime extends PluginBase implements CommandExecutor{
 			}else{
 				$lifetime = (float) $args[1];
 				if($lifetime < 0){
-					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [
-						$lifetime,
-						0,
-					]));
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [(string) $lifetime, "0"]));
 				}elseif($lifetime > 9999){
-					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [
-						$lifetime,
-						9999,
-					]));
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifetime, "9999"]));
 				}else{
 					$type = $this->typeMap[strtolower($args[0])] ?? self::INVALID_TYPE;
 					if($type === self::INVALID_TYPE){
 						$sender->sendMessage($this->language->translate("commands.lifetime.failure.invalid", [$args[0]]));
 					}else{
-						$this->getConfig()->set(($type ? "arrow" : "item") . "-lifetime", $lifetime);
-						$sender->sendMessage($this->language->translate("commands.lifetime.success", [
-							$this->language->translate("commands.lifetime." . ($type ? "arrow" : "item")),
-							$lifetime,
-						]));
+						$typeName = ($type ? "arrow" : "item");
+						$this->getConfig()->set("{$typeName}-lifetime", $lifetime);
+						$sender->sendMessage($this->language->translate("commands.lifetime.success", [$this->getConfig()->getNested("command.children.{$typeName}.name"), (string) $lifetime]));
 					}
 				}
 			}
@@ -138,21 +143,29 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	}
 
 	/**
+	 * @Override for multilingual support of the config file
+	 *
+	 * @return bool
+	 */
+	public function saveDefaultConfig() : bool{
+		$resource = $this->getResource("lang/{$this->getServer()->getLanguage()->getLang()}/config.yml");
+		if($resource === null){
+			$resource = $this->getResource("lang/" . PluginLang::FALLBACK_LANGUAGE . "/config.yml");
+		}
+
+		if(!file_exists($configFile = $this->getDataFolder() . "config.yml")){
+			$ret = stream_copy_to_stream($resource, $fp = fopen($configFile, "wb")) > 0;
+			fclose($fp);
+			fclose($resource);
+			return $ret;
+		}
+		return false;
+	}
+
+	/**
 	 * @return PluginLang
 	 */
 	public function getLanguage() : PluginLang{
 		return $this->language;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSourceFolder() : string{
-		$pharPath = \Phar::running();
-		if(empty($pharPath)){
-			return dirname(__FILE__, 4) . DIRECTORY_SEPARATOR;
-		}else{
-			return $pharPath . DIRECTORY_SEPARATOR;
-		}
 	}
 }
