@@ -120,11 +120,11 @@ class PluginLang{
 	 */
 	public function getLanguageList() : array{
 		$result = [];
-		foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->plugin->getSourceFolder() . 'resources/lang/')) as $filePath => $fileInfo){
-			if(substr($filePath, -4) == '.ini'){
+		foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->plugin->getSourceFolder() . "resources/lang/")) as $filePath => $fileInfo){
+			if(substr($filePath, -4) == ".ini"){
 				$lang = $this->loadLang($filePath);
-				if(isset($lang['language.name'])){
-					$result[substr($fileInfo->getFilename(), 0, -4)] = $lang['language.name'];
+				if(isset($lang["language.name"])){
+					$result[substr($fileInfo->getFilename(), 0, -4)] = $lang["language.name"];
 				}
 			}
 		}

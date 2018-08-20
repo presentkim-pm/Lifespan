@@ -53,26 +53,26 @@ class Lifetime extends PluginBase implements CommandExecutor{
 		$this->language = new PluginLang($this);
 
 		$this->typeMap = [];
-		$this->typeMap[strtolower($this->language->translate('commands.lifetime.item'))] = self::ITEM_TYPE;
-		foreach($this->language->getArray('commands.lifetime.item.aliases') as $key => $aliases){
+		$this->typeMap[strtolower($this->language->translate("commands.lifetime.item"))] = self::ITEM_TYPE;
+		foreach($this->language->getArray("commands.lifetime.item.aliases") as $key => $aliases){
 			$this->typeMap[strtolower($aliases)] = self::ITEM_TYPE;
 		}
-		$this->typeMap[strtolower($this->language->translate('commands.lifetime.arrow'))] = self::ARROW_TYPE;
-		foreach($this->language->getArray('commands.lifetime.arrow.aliases') as $key => $aliases){
+		$this->typeMap[strtolower($this->language->translate("commands.lifetime.arrow"))] = self::ARROW_TYPE;
+		foreach($this->language->getArray("commands.lifetime.arrow.aliases") as $key => $aliases){
 			$this->typeMap[strtolower($aliases)] = self::ARROW_TYPE;
 		}
 
 		if($this->command !== null){
 			$this->getServer()->getCommandMap()->unregister($this->command);
 		}
-		$this->command = new PluginCommand($this->language->translate('commands.lifetime'), $this);
-		$this->command->setPermission('lifetime.cmd');
-		$this->command->setDescription($this->language->translate('commands.lifetime.description'));
-		$this->command->setUsage($this->language->translate('commands.lifetime.usage'));
-		if(is_array($aliases = $this->language->getArray('commands.lifetime.aliases'))){
+		$this->command = new PluginCommand($this->language->translate("commands.lifetime"), $this);
+		$this->command->setPermission("lifetime.cmd");
+		$this->command->setDescription($this->language->translate("commands.lifetime.description"));
+		$this->command->setUsage($this->language->translate("commands.lifetime.usage"));
+		if(is_array($aliases = $this->language->getArray("commands.lifetime.aliases"))){
 			$this->command->setAliases($aliases);
 		}
-		$this->getServer()->getCommandMap()->register('lifetime', $this->command);
+		$this->getServer()->getCommandMap()->register("lifetime", $this->command);
 
 		$this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
 	}
@@ -101,27 +101,27 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
 		if(isset($args[1])){
 			if(!is_numeric($args[1])){
-				$sender->sendMessage($this->language->translate('commands.generic.num.notNumber', [$args[1]]));
+				$sender->sendMessage($this->language->translate("commands.generic.num.notNumber", [$args[1]]));
 			}else{
 				$lifetime = (float) $args[1];
 				if($lifetime < 0){
-					$sender->sendMessage($this->language->translate('commands.generic.num.tooSmall', [
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [
 						$lifetime,
 						0,
 					]));
 				}elseif($lifetime > 9999){
-					$sender->sendMessage($this->language->translate('commands.generic.num.tooBig', [
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [
 						$lifetime,
 						9999,
 					]));
 				}else{
 					$type = $this->typeMap[strtolower($args[0])] ?? self::INVALID_TYPE;
 					if($type === self::INVALID_TYPE){
-						$sender->sendMessage($this->language->translate('commands.lifetime.failure.invalid', [$args[0]]));
+						$sender->sendMessage($this->language->translate("commands.lifetime.failure.invalid", [$args[0]]));
 					}else{
-						$this->getConfig()->set(($type ? 'arrow' : 'item') . '-lifetime', $lifetime);
-						$sender->sendMessage($this->language->translate('commands.lifetime.success', [
-							$this->language->translate('commands.lifetime.' . ($type ? 'arrow' : 'item')),
+						$this->getConfig()->set(($type ? "arrow" : "item") . "-lifetime", $lifetime);
+						$sender->sendMessage($this->language->translate("commands.lifetime.success", [
+							$this->language->translate("commands.lifetime." . ($type ? "arrow" : "item")),
 							$lifetime,
 						]));
 					}
@@ -133,11 +133,11 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	}
 
 	/**
-	 * @param string $name = ''
+	 * @param string $name = ""
 	 *
 	 * @return PluginCommand
 	 */
-	public function getCommand(string $name = '') : PluginCommand{
+	public function getCommand(string $name = "") : PluginCommand{
 		return $this->command;
 	}
 
