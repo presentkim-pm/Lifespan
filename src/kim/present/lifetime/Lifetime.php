@@ -20,7 +20,9 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	/** @var Lifetime */
 	private static $instance = null;
 
-	/** @return Lifetime */
+	/**
+	 * @return Lifetime
+	 */
 	public static function getInstance() : Lifetime{
 		return self::$instance;
 	}

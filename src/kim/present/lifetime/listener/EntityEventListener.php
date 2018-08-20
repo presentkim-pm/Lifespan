@@ -19,6 +19,11 @@ class EntityEventListener implements Listener{
 	/** @var \ReflectionProperty */
 	private $property = null;
 
+	/**
+	 * EntityEventListener constructor.
+	 *
+	 * @param Lifetime $owner
+	 */
 	public function __construct(Lifetime $owner){
 		$this->owner = $owner;
 
@@ -27,7 +32,9 @@ class EntityEventListener implements Listener{
 		$this->property->setAccessible(true);
 	}
 
-	/** @param EntitySpawnEvent $event */
+	/**
+	 * @param EntitySpawnEvent $event
+	 */
 	public function onEntitySpawnEvent(EntitySpawnEvent $event){
 		$entity = $event->getEntity();
 		if($entity instanceof ItemEntity){
