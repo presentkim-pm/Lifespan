@@ -75,7 +75,11 @@ class Lifetime extends PluginBase implements CommandExecutor{
 		}
 		$this->getServer()->getCommandMap()->register("lifetime", $this->command);
 
-		$this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
+		try{
+			$this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
+		}catch(\ReflectionException $e){
+			$this->setEnabled(false);
+		}
 	}
 
 	/**

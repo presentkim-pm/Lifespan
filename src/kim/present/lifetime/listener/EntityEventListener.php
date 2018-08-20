@@ -22,6 +22,8 @@ class EntityEventListener implements Listener{
 	 * EntityEventListener constructor.
 	 *
 	 * @param Lifetime $owner
+	 *
+	 * @throws \ReflectionException
 	 */
 	public function __construct(Lifetime $owner){
 		$this->owner = $owner;
