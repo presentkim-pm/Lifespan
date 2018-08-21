@@ -9,6 +9,10 @@ use kim\present\lifetime\listener\EntityEventListener;
 use pocketmine\command\{
 	Command, CommandExecutor, CommandSender, PluginCommand
 };
+use pocketmine\nbt\BigEndianNBTStream;
+use pocketmine\nbt\tag\{
+	CompoundTag, ShortTag
+};
 use pocketmine\permission\{
 	Permission, PermissionManager
 };
@@ -18,6 +22,9 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	public const INVALID_TYPE = -1;
 	public const ITEM_TYPE = 0;
 	public const ARROW_TYPE = 1;
+
+	public const TAG_ITEM = "Item";
+	public const TAG_ARROW = "Arrow";
 
 	/** @var Lifetime */
 	private static $instance = null;
@@ -37,6 +44,12 @@ class Lifetime extends PluginBase implements CommandExecutor{
 
 	/** @var int[string] */
 	private $typeMap = [];
+
+	/** @var int (short) */
+	private $itemLifetime = 6000; //default: 5
+
+	/** @var int (short) */
+	private $arrowLifetime = 1200; //default: 60 seconds
 
 	/**
 	 * Called when the plugin is loaded, before calling onEnable()
@@ -87,6 +100,19 @@ class Lifetime extends PluginBase implements CommandExecutor{
 			$permission->setDefault(Permission::getByName($config->getNested("permission.main")));
 		}
 
+		//Load lifetime data from nbt
+		if(file_exists($file = "{$this->getDataFolder()}data.dat")){
+			try{
+				/** @var CompoundTag $namedTag */
+				$namedTag = (new BigEndianNBTStream())->readCompressed(file_get_contents($file));
+				$this->itemLifetime = $namedTag->getShort(self::TAG_ITEM);
+				$this->arrowLifetime = $namedTag->getShort(self::TAG_ARROW);
+			}catch(\Throwable $e){
+				rename($file, "{$file}.bak");
+				$this->getLogger()->warning("Error occurred loading data.dat");
+			}
+		}
+
 		//Register event listeners
 		try{
 			$this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
@@ -100,12 +126,15 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	 * Use this to free open things and finish actions
 	 */
 	public function onDisable() : void{
-		$dataFolder = $this->getDataFolder();
-		if(!file_exists($dataFolder)){
-			mkdir($dataFolder, 0777, true);
+		//Save lifetime data to nbt
+		try{
+			file_put_contents("{$this->getDataFolder()}data.dat", (new BigEndianNBTStream())->writeCompressed(new CompoundTag("", [
+				new ShortTag(self::TAG_ITEM, $this->itemLifetime),
+				new ShortTag(self::TAG_ARROW, $this->arrowLifetime)
+			])));
+		}catch(\Throwable $e){
+			$this->getLogger()->warning("Error occurred saving data.dat");
 		}
-
-		$this->saveConfig();
 	}
 
 	/**
@@ -121,7 +150,7 @@ class Lifetime extends PluginBase implements CommandExecutor{
 			if(!is_numeric($args[1])){
 				$sender->sendMessage($this->language->translate("commands.generic.num.notNumber", [$args[1]]));
 			}else{
-				$lifetime = (float) $args[1];
+				$lifetime = (int) $args[1];
 				if($lifetime < 0){
 					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [(string) $lifetime, "0"]));
 				}elseif($lifetime > 9999){
@@ -132,7 +161,7 @@ class Lifetime extends PluginBase implements CommandExecutor{
 						$sender->sendMessage($this->language->translate("commands.lifetime.failure.invalid", [$args[0]]));
 					}else{
 						$typeName = ($type ? "arrow" : "item");
-						$this->getConfig()->set("{$typeName}-lifetime", $lifetime);
+						$type ? $this->setItemLifetime($lifetime) : $this->setArrowLifetime($lifetime);
 						$sender->sendMessage($this->language->translate("commands.lifetime.success", [$this->getConfig()->getNested("command.children.{$typeName}.name"), (string) $lifetime]));
 					}
 				}
@@ -167,5 +196,33 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	 */
 	public function getLanguage() : PluginLang{
 		return $this->language;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getItemLifetime() : int{
+		return $this->itemLifetime;
+	}
+
+	/**
+	 * @param int $value (shrot)
+	 */
+	public function setItemLifetime(int $value) : void{
+		$this->itemLifetime = $value;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getArrowLifetime() : int{
+		return $this->arrowLifetime;
+	}
+
+	/**
+	 * @param int $value (shrot)
+	 */
+	public function setArrowLifetime(int $value) : void{
+		$this->arrowLifetime = $value;
 	}
 }
