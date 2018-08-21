@@ -19,7 +19,6 @@ use pocketmine\permission\{
 use pocketmine\plugin\PluginBase;
 
 class Lifespan extends PluginBase implements CommandExecutor{
-	public const INVALID_TYPE = -1;
 	public const ITEM_TYPE = 0;
 	public const ARROW_TYPE = 1;
 
@@ -156,8 +155,8 @@ class Lifespan extends PluginBase implements CommandExecutor{
 				}elseif($lifespan > 0x7fff){
 					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifespan, (string) 0x7fff]));
 				}else{
-					$type = $this->typeMap[strtolower($args[0])] ?? self::INVALID_TYPE;
-					if($type === self::INVALID_TYPE){
+					$type = $this->typeMap[strtolower($args[0])] ?? null;
+					if($type === null){
 						$sender->sendMessage($this->language->translate("commands.lifespan.failure.invalid", [$args[0]]));
 					}else{
 						$typeName = ($type ? "arrow" : "item");
