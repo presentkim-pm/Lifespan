@@ -42,8 +42,8 @@ use pocketmine\permission\{
 use pocketmine\plugin\PluginBase;
 
 class Lifespan extends PluginBase implements CommandExecutor{
-	public const ITEM_TYPE = 0;
-	public const ARROW_TYPE = 1;
+	public const TYPE_ITEM = 0;
+	public const TYPE_ARROW = 1;
 
 	public const TAG_ITEM = "Item";
 	public const TAG_ARROW = "Arrow";
@@ -69,8 +69,8 @@ class Lifespan extends PluginBase implements CommandExecutor{
 
 	/** @var string[] */
 	private $typeTagMap = [
-		self::ITEM_TYPE => "item",
-		self::ARROW_TYPE => "arrow"
+		self::TYPE_ITEM => "item",
+		self::TYPE_ARROW => "arrow"
 	];
 
 	/** @var int (short) */
