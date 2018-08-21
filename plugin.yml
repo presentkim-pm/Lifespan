@@ -1,14 +1,14 @@
 ---
-name:             Lifespan
-main:             kim\present\lifespan\Lifespan
-version:          1.1.2
-api:              [3.0.0, 3.0.0-ALPHA10, 3.0.0-ALPHA11, 3.0.0-ALPHA12, 4.0.0]
-author:           PresentKim
-website:          https://github.com/PresentKim/Lifespan-PMMP
-description:      A plugin control item and arrow's lifespan
+name: Lifespan
+main: kim\present\lifespan\Lifespan
+version: 1.1.2
+api: [3.0.0, 3.0.0-ALPHA10, 3.0.0-ALPHA11, 3.0.0-ALPHA12, 4.0.0]
+author: PresentKim
+website: https://github.com/PresentKim/Lifespan-PMMP
+description: A plugin control item and arrow's lifespan
 
 permissions:
   lifespan.cmd:
-    description:  "Set entity's lifespan"
-    default:      op
+    description: Lifespan command
+    default: op
 ...
