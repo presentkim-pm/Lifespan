@@ -6,6 +6,7 @@ namespace kim\present\lifespan;
 
 use kim\present\lifespan\lang\PluginLang;
 use kim\present\lifespan\listener\EntityEventListener;
+use kim\present\lifespan\task\CheckUpdateAsyncTask;
 use pocketmine\command\{
 	Command, CommandExecutor, CommandSender, PluginCommand
 };
@@ -82,6 +83,11 @@ class Lifespan extends PluginBase implements CommandExecutor{
 			foreach($config->getNested("command.children.{$tag}.aliases") as $key => $aliases){
 				$this->typeMap[strtolower($aliases)] = $type;
 			}
+		}
+
+		//Check latest version
+		if($config->getNested("settings.update-check", false)){
+			$this->getServer()->getAsyncPool()->submitTask(new CheckUpdateAsyncTask());
 		}
 
 		//Load language file
