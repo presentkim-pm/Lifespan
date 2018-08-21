@@ -158,9 +158,8 @@ class Lifespan extends PluginBase implements CommandExecutor{
 				}elseif($lifespan > 0x7fff){
 					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifespan, (string) 0x7fff]));
 				}else{
-					$typeName = ($type ? "arrow" : "item");
 					$type ? $this->setArrowLifespan($lifespan) : $this->setItemLifespan($lifespan);
-					$sender->sendMessage($this->language->translate("commands.lifespan.success", [$this->getConfig()->getNested("command.children.{$typeName}.name"), (string) $lifespan]));
+					$sender->sendMessage($this->language->translate("commands.lifespan.success", [$this->getConfig()->getNested("command.children." . ($type ? "arrow" : "item") . ".name"), (string) $lifespan]));
 				}
 			}
 			return true;
