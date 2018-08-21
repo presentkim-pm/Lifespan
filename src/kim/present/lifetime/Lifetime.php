@@ -46,7 +46,7 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	private $typeMap = [];
 
 	/** @var int (short) */
-	private $itemLifetime = 6000; //default: 5
+	private $itemLifetime = 6000; //default: 5 minutes
 
 	/** @var int (short) */
 	private $arrowLifetime = 1200; //default: 60 seconds
