@@ -154,7 +154,7 @@ class Lifespan extends PluginBase implements CommandExecutor{
 			}else{
 				$lifespan = (int) $args[1];
 				if($lifespan < 0){
-					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [(string) $lifespan, "0"]));
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [(string) $lifespan, (string) 0]));
 				}elseif($lifespan > 0x7fff){
 					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifespan, (string) 0x7fff]));
 				}else{
@@ -178,7 +178,7 @@ class Lifespan extends PluginBase implements CommandExecutor{
 			$resource = $this->getResource("lang/" . PluginLang::FALLBACK_LANGUAGE . "/config.yml");
 		}
 
-		if(!file_exists($configFile = $this->getDataFolder() . "config.yml")){
+		if(!file_exists($configFile = "{$this->getDataFolder()}config.yml")){
 			$ret = stream_copy_to_stream($resource, $fp = fopen($configFile, "wb")) > 0;
 			fclose($fp);
 			fclose($resource);
@@ -206,9 +206,9 @@ class Lifespan extends PluginBase implements CommandExecutor{
 	 */
 	public function setItemLifespan(int $value) : void{
 		if($value < 0){
-			throw new \InvalidArgumentException("Value $value is too small, it must be at least 0");
+			throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
 		}elseif($value > 0x7fff){
-			throw new \InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
+			throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
 		}
 		$this->itemLifespan = $value;
 	}
@@ -225,9 +225,9 @@ class Lifespan extends PluginBase implements CommandExecutor{
 	 */
 	public function setArrowLifespan(int $value) : void{
 		if($value < 0){
-			throw new \InvalidArgumentException("Value $value is too small, it must be at least 0");
+			throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
 		}elseif($value > 0x7fff){
-			throw new \InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
+			throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
 		}
 		$this->arrowLifespan = $value;
 	}
