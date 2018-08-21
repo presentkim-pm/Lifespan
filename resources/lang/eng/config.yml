@@ -17,7 +17,7 @@ command:
 
   #Aliases of main command
   #You can add, replace, or remove them as you like
-  aliases: ["lifespan"]
+  aliases: ["lifetime", "ls"]
 
   children:
     #Setting of subcommands

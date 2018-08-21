@@ -17,7 +17,7 @@ command:
 
   #메인 명령어의 별칭들
   #원하는대로 추가, 수정, 삭제할 수 있습니다
-  aliases: ["lifespan"]
+  aliases: ["lifetime", "ls"]
 
   children:
     #하위 명령어들의 설정
