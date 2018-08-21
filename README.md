@@ -4,7 +4,7 @@
 [![release](https://img.shields.io/github/release/PresentKim/Lifespan-PMMP.svg?label=Release)](https://github.com/PresentKim/Lifespan-PMMP/releases/latest) [![download](https://img.shields.io/github/downloads/PresentKim/Lifespan-PMMP/total.svg?label=Download)](https://github.com/PresentKim/Lifespan-PMMP/releases/latest)
 
 
-A plugin control item and arrow's lifespan for PocketMine-MP
+Set item&arrow's lifespan!
 
 ## Command
 | name     | arguments                  | description             | permission        |
