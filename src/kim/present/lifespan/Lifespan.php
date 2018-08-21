@@ -41,8 +41,14 @@ class Lifespan extends PluginBase implements CommandExecutor{
 	/** @var PluginLang */
 	private $language;
 
-	/** @var int[string] */
-	private $typeMap = [];
+	/** @var int[] */
+	private $typeMap;
+
+	/** @var string[] */
+	private $typeTagMap = [
+		self::ITEM_TYPE => "item",
+		self::ARROW_TYPE => "arrow"
+	];
 
 	/** @var int (short) */
 	private $itemLifespan = 6000; //default: 5 minutes
@@ -71,13 +77,11 @@ class Lifespan extends PluginBase implements CommandExecutor{
 
 		//Load type map from config file
 		$this->typeMap = [];
-		$this->typeMap[strtolower($config->getNested("command.children.item.name"))] = self::ITEM_TYPE;
-		foreach($config->getNested("command.children.item.aliases") as $key => $aliases){
-			$this->typeMap[strtolower($aliases)] = self::ITEM_TYPE;
-		}
-		$this->typeMap[strtolower($config->getNested("command.children.arrow.name"))] = self::ARROW_TYPE;
-		foreach($config->getNested("command.children.arrow.aliases") as $key => $aliases){
-			$this->typeMap[strtolower($aliases)] = self::ARROW_TYPE;
+		foreach($this->typeTagMap as $type => $tag){
+			$this->typeMap[strtolower($config->getNested("command.children.{$tag}.name"))] = $type;
+			foreach($config->getNested("command.children.{$tag}.aliases") as $key => $aliases){
+				$this->typeMap[strtolower($aliases)] = $type;
+			}
 		}
 
 		//Load language file
@@ -159,7 +163,7 @@ class Lifespan extends PluginBase implements CommandExecutor{
 					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifespan, (string) 0x7fff]));
 				}else{
 					$type ? $this->setArrowLifespan($lifespan) : $this->setItemLifespan($lifespan);
-					$sender->sendMessage($this->language->translate("commands.lifespan.success", [$this->getConfig()->getNested("command.children." . ($type ? "arrow" : "item") . ".name"), (string) $lifespan]));
+					$sender->sendMessage($this->language->translate("commands.lifespan.success", [$this->getConfig()->getNested("command.children.{$this->typeTagMap[$type]}.name"), (string) $lifespan]));
 				}
 			}
 			return true;
