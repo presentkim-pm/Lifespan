@@ -153,8 +153,8 @@ class Lifetime extends PluginBase implements CommandExecutor{
 				$lifetime = (int) $args[1];
 				if($lifetime < 0){
 					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [(string) $lifetime, "0"]));
-				}elseif($lifetime > 9999){
-					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifetime, "9999"]));
+				}elseif($lifetime > 0x7fff){
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifetime, (string) 0x7fff]));
 				}else{
 					$type = $this->typeMap[strtolower($args[0])] ?? self::INVALID_TYPE;
 					if($type === self::INVALID_TYPE){
@@ -209,6 +209,11 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	 * @param int $value (shrot)
 	 */
 	public function setItemLifetime(int $value) : void{
+		if($value < 0){
+			throw new \InvalidArgumentException("Value $value is too small, it must be at least 0");
+		}elseif($value > 0x7fff){
+			throw new \InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
+		}
 		$this->itemLifetime = $value;
 	}
 
@@ -223,6 +228,11 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	 * @param int $value (shrot)
 	 */
 	public function setArrowLifetime(int $value) : void{
+		if($value < 0){
+			throw new \InvalidArgumentException("Value $value is too small, it must be at least 0");
+		}elseif($value > 0x7fff){
+			throw new \InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
+		}
 		$this->arrowLifetime = $value;
 	}
 }
