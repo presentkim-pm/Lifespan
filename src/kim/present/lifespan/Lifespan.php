@@ -161,7 +161,7 @@ class Lifespan extends PluginBase implements CommandExecutor{
 						$sender->sendMessage($this->language->translate("commands.lifespan.failure.invalid", [$args[0]]));
 					}else{
 						$typeName = ($type ? "arrow" : "item");
-						$type ? $this->setItemLifespan($lifespan) : $this->setArrowLifespan($lifespan);
+						$type ? $this->setArrowLifespan($lifespan) : $this->setItemLifespan($lifespan);
 						$sender->sendMessage($this->language->translate("commands.lifespan.success", [$this->getConfig()->getNested("command.children.{$typeName}.name"), (string) $lifespan]));
 					}
 				}
