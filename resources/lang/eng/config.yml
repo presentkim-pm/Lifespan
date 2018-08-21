@@ -4,7 +4,7 @@
 
 settings:
   #Multi-language setting
-  #Available: eng, kor
+  #Available: eng, kor, rus
   language: "eng"
 
   update-check: false

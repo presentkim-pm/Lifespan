@@ -4,7 +4,7 @@
 
 settings:
   #다중 언어 설정
-  #가능한 언어: eng, kor
+  #가능한 언어: eng, kor, rus
   language: "kor"
 
   update-check: false
