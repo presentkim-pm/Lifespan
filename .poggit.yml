@@ -5,7 +5,7 @@ branches:
 
 projects:
   Lifespan:
-    projectId: 1826
+    #projectId: 1826
     path: ""
     icon: assets/icon/512x512.png
 ...
