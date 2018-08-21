@@ -1,11 +1,11 @@
---- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/PresentKim/Lifetime-PMMP
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/PresentKim/Lifespan-PMMP
 
 branches:
 - master
 
 projects:
-  Lifetime:
-    #projectId: 1826
+  Lifespan:
+    projectId: 1826
     path: ""
     icon: assets/icon/512x512.png
 ...

@@ -1,4 +1,4 @@
-# Advanced configuration file for Lifetime plugin
+# Advanced configuration file for Lifespan plugin
 # Some of these settings are safe, others can break your server if modified incorrectly
 # New settings/defaults won't appear automatically on this file when upgrading
 
@@ -11,11 +11,11 @@ settings:
 command:
   #Name of main command
   #You can change this to be what you want
-  name: "lifetime"
+  name: "lifespan"
 
   #Aliases of main command
   #You can add, replace, or remove them as you like
-  aliases: ["lifetime", "lt", "lifespan"]
+  aliases: ["lifespan"]
 
   children:
     #Setting of subcommands

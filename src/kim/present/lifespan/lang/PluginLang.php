@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace kim\present\lifetime\lang;
+namespace kim\present\lifespan\lang;
 
 use pocketmine\plugin\PluginBase;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace kim\present\lifetime;
+namespace kim\present\lifespan;
 
-use kim\present\lifetime\lang\PluginLang;
-use kim\present\lifetime\listener\EntityEventListener;
+use kim\present\lifespan\lang\PluginLang;
+use kim\present\lifespan\listener\EntityEventListener;
 use pocketmine\command\{
 	Command, CommandExecutor, CommandSender, PluginCommand
 };
@@ -18,7 +18,7 @@ use pocketmine\permission\{
 };
 use pocketmine\plugin\PluginBase;
 
-class Lifetime extends PluginBase implements CommandExecutor{
+class Lifespan extends PluginBase implements CommandExecutor{
 	public const INVALID_TYPE = -1;
 	public const ITEM_TYPE = 0;
 	public const ARROW_TYPE = 1;
@@ -26,13 +26,13 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	public const TAG_ITEM = "Item";
 	public const TAG_ARROW = "Arrow";
 
-	/** @var Lifetime */
+	/** @var Lifespan */
 	private static $instance = null;
 
 	/**
-	 * @return Lifetime
+	 * @return Lifespan
 	 */
-	public static function getInstance() : Lifetime{
+	public static function getInstance() : Lifespan{
 		return self::$instance;
 	}
 
@@ -46,10 +46,10 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	private $typeMap = [];
 
 	/** @var int (short) */
-	private $itemLifetime = 6000; //default: 5 minutes
+	private $itemLifespan = 6000; //default: 5 minutes
 
 	/** @var int (short) */
-	private $arrowLifetime = 1200; //default: 60 seconds
+	private $arrowLifespan = 1200; //default: 60 seconds
 
 	/**
 	 * Called when the plugin is loaded, before calling onEnable()
@@ -87,26 +87,26 @@ class Lifetime extends PluginBase implements CommandExecutor{
 
 		//Register main command
 		$this->command = new PluginCommand($config->getNested("command.name"), $this);
-		$this->command->setPermission("lifetime.cmd");
+		$this->command->setPermission("lifespan.cmd");
 		$this->command->setAliases($config->getNested("command.aliases"));
-		$this->command->setUsage($this->language->translate("commands.lifetime.usage"));
-		$this->command->setDescription($this->language->translate("commands.lifetime.description"));
+		$this->command->setUsage($this->language->translate("commands.lifespan.usage"));
+		$this->command->setDescription($this->language->translate("commands.lifespan.description"));
 		$this->getServer()->getCommandMap()->register($this->getName(), $this->command);
 
 		//Load permission's default value from config
-		$permission = PermissionManager::getInstance()->getPermission("lifetime.cmd");
+		$permission = PermissionManager::getInstance()->getPermission("lifespan.cmd");
 		$defaultValue = $config->getNested("permission.main");
 		if($permission !== null && $defaultValue !== null){
 			$permission->setDefault(Permission::getByName($config->getNested("permission.main")));
 		}
 
-		//Load lifetime data from nbt
+		//Load lifespan data from nbt
 		if(file_exists($file = "{$this->getDataFolder()}data.dat")){
 			try{
 				/** @var CompoundTag $namedTag */
 				$namedTag = (new BigEndianNBTStream())->readCompressed(file_get_contents($file));
-				$this->itemLifetime = $namedTag->getShort(self::TAG_ITEM);
-				$this->arrowLifetime = $namedTag->getShort(self::TAG_ARROW);
+				$this->itemLifespan = $namedTag->getShort(self::TAG_ITEM);
+				$this->arrowLifespan = $namedTag->getShort(self::TAG_ARROW);
 			}catch(\Throwable $e){
 				rename($file, "{$file}.bak");
 				$this->getLogger()->warning("Error occurred loading data.dat");
@@ -126,11 +126,11 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	 * Use this to free open things and finish actions
 	 */
 	public function onDisable() : void{
-		//Save lifetime data to nbt
+		//Save lifespan data to nbt
 		try{
 			file_put_contents("{$this->getDataFolder()}data.dat", (new BigEndianNBTStream())->writeCompressed(new CompoundTag("", [
-				new ShortTag(self::TAG_ITEM, $this->itemLifetime),
-				new ShortTag(self::TAG_ARROW, $this->arrowLifetime)
+				new ShortTag(self::TAG_ITEM, $this->itemLifespan),
+				new ShortTag(self::TAG_ARROW, $this->arrowLifespan)
 			])));
 		}catch(\Throwable $e){
 			$this->getLogger()->warning("Error occurred saving data.dat");
@@ -150,19 +150,19 @@ class Lifetime extends PluginBase implements CommandExecutor{
 			if(!is_numeric($args[1])){
 				$sender->sendMessage($this->language->translate("commands.generic.num.notNumber", [$args[1]]));
 			}else{
-				$lifetime = (int) $args[1];
-				if($lifetime < 0){
-					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [(string) $lifetime, "0"]));
-				}elseif($lifetime > 0x7fff){
-					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifetime, (string) 0x7fff]));
+				$lifespan = (int) $args[1];
+				if($lifespan < 0){
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [(string) $lifespan, "0"]));
+				}elseif($lifespan > 0x7fff){
+					$sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [(string) $lifespan, (string) 0x7fff]));
 				}else{
 					$type = $this->typeMap[strtolower($args[0])] ?? self::INVALID_TYPE;
 					if($type === self::INVALID_TYPE){
-						$sender->sendMessage($this->language->translate("commands.lifetime.failure.invalid", [$args[0]]));
+						$sender->sendMessage($this->language->translate("commands.lifespan.failure.invalid", [$args[0]]));
 					}else{
 						$typeName = ($type ? "arrow" : "item");
-						$type ? $this->setItemLifetime($lifetime) : $this->setArrowLifetime($lifetime);
-						$sender->sendMessage($this->language->translate("commands.lifetime.success", [$this->getConfig()->getNested("command.children.{$typeName}.name"), (string) $lifetime]));
+						$type ? $this->setItemLifespan($lifespan) : $this->setArrowLifespan($lifespan);
+						$sender->sendMessage($this->language->translate("commands.lifespan.success", [$this->getConfig()->getNested("command.children.{$typeName}.name"), (string) $lifespan]));
 					}
 				}
 			}
@@ -201,38 +201,38 @@ class Lifetime extends PluginBase implements CommandExecutor{
 	/**
 	 * @return int
 	 */
-	public function getItemLifetime() : int{
-		return $this->itemLifetime;
+	public function getItemLifespan() : int{
+		return $this->itemLifespan;
 	}
 
 	/**
 	 * @param int $value (shrot)
 	 */
-	public function setItemLifetime(int $value) : void{
+	public function setItemLifespan(int $value) : void{
 		if($value < 0){
 			throw new \InvalidArgumentException("Value $value is too small, it must be at least 0");
 		}elseif($value > 0x7fff){
 			throw new \InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
 		}
-		$this->itemLifetime = $value;
+		$this->itemLifespan = $value;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getArrowLifetime() : int{
-		return $this->arrowLifetime;
+	public function getArrowLifespan() : int{
+		return $this->arrowLifespan;
 	}
 
 	/**
 	 * @param int $value (shrot)
 	 */
-	public function setArrowLifetime(int $value) : void{
+	public function setArrowLifespan(int $value) : void{
 		if($value < 0){
 			throw new \InvalidArgumentException("Value $value is too small, it must be at least 0");
 		}elseif($value > 0x7fff){
 			throw new \InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
 		}
-		$this->arrowLifetime = $value;
+		$this->arrowLifespan = $value;
 	}
 }
