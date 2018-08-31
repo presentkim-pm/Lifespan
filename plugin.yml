@@ -4,7 +4,6 @@ main: kim\present\lifespan\Lifespan
 version: 2.0.0
 api: [3.0.0, 4.0.0]
 author: PresentKim
-website: https://github.com/PresentKim/Lifespan-PMMP
 description: Set item&arrow's lifespan!
 
 permissions:
