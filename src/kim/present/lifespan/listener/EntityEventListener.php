@@ -35,7 +35,7 @@ use pocketmine\event\Listener;
 
 class EntityEventListener implements Listener{
 	/** @var Lifespan */
-	private $owner = null;
+	private $plugin;
 
 	/** @var \ReflectionProperty */
 	private $property = null;
@@ -43,12 +43,12 @@ class EntityEventListener implements Listener{
 	/**
 	 * EntityEventListener constructor.
 	 *
-	 * @param Lifespan $owner
+	 * @param Lifespan $plugin
 	 *
 	 * @throws \ReflectionException
 	 */
-	public function __construct(Lifespan $owner){
-		$this->owner = $owner;
+	public function __construct(Lifespan $plugin){
+		$this->plugin = $plugin;
 
 		$reflection = new \ReflectionClass(Entity::class);
 		$this->property = $reflection->getProperty("age");
@@ -61,9 +61,9 @@ class EntityEventListener implements Listener{
 	public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
 		$entity = $event->getEntity();
 		if($entity instanceof ItemEntity){
-			$this->property->setValue($entity, min(6000, max(-0x7fff, 6000 - $this->owner->getItemLifespan())));
+			$this->property->setValue($entity, min(6000, max(-0x7fff, 6000 - $this->plugin->getItemLifespan())));
 		}elseif($entity instanceof Arrow){
-			$this->property->setValue($entity, min(1200, max(-0x7fff, 1200 - $this->owner->getArrowLifespan())));
+			$this->property->setValue($entity, min(1200, max(-0x7fff, 1200 - $this->plugin->getArrowLifespan())));
 		}
 	}
 }
