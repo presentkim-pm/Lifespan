@@ -30,7 +30,7 @@ use kim\present\lifespan\lang\PluginLang;
 use kim\present\lifespan\listener\EntityEventListener;
 use kim\present\lifespan\task\CheckUpdateAsyncTask;
 use pocketmine\command\{
-	Command, CommandExecutor, CommandSender, PluginCommand
+	Command, CommandSender, PluginCommand
 };
 use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\tag\{
@@ -41,7 +41,7 @@ use pocketmine\permission\{
 };
 use pocketmine\plugin\PluginBase;
 
-class Lifespan extends PluginBase implements CommandExecutor{
+class Lifespan extends PluginBase{
 	public const TYPE_ITEM = 0;
 	public const TYPE_ARROW = 1;
 
