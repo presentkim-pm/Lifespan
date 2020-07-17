@@ -31,6 +31,11 @@ use blugin\lifespan\listener\EntityEventListener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
+use pocketmine\entity\Entity;
+use pocketmine\entity\object\ItemEntity;
+use pocketmine\entity\projectile\Arrow;
+use pocketmine\event\entity\EntitySpawnEvent;
+use pocketmine\event\Listener;
 use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ShortTag;
@@ -38,7 +43,7 @@ use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
 
-class Lifespan extends PluginBase{
+class Lifespan extends PluginBase implements Listener{
     public const TYPE_ITEM = 0;
     public const TYPE_ARROW = 1;
 
@@ -47,6 +52,9 @@ class Lifespan extends PluginBase{
 
     /** @var Lifespan */
     private static $instance = null;
+
+    /** @var \ReflectionProperty */
+    private $property = null;
 
     /**
      * @return Lifespan
@@ -78,6 +86,10 @@ class Lifespan extends PluginBase{
      */
     public function onLoad() : void{
         self::$instance = $this;
+
+        $reflection = new \ReflectionClass(Entity::class);
+        $this->property = $reflection->getProperty("age");
+        $this->property->setAccessible(true);
     }
 
     /**
@@ -198,6 +210,18 @@ class Lifespan extends PluginBase{
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param EntitySpawnEvent $event
+     */
+    public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
+        $entity = $event->getEntity();
+        if($entity instanceof ItemEntity){
+            $this->property->setValue($entity, min(6000, max(-0x7fff, 6000 - $this->getItemLifespan())));
+        }elseif($entity instanceof Arrow){
+            $this->property->setValue($entity, min(1200, max(-0x7fff, 1200 - $this->getArrowLifespan())));
+        }
     }
 
     /**
