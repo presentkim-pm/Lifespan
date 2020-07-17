@@ -34,36 +34,36 @@ use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
 
 class EntityEventListener implements Listener{
-	/** @var Lifespan */
-	private $plugin;
+    /** @var Lifespan */
+    private $plugin;
 
-	/** @var \ReflectionProperty */
-	private $property = null;
+    /** @var \ReflectionProperty */
+    private $property = null;
 
-	/**
-	 * EntityEventListener constructor.
-	 *
-	 * @param Lifespan $plugin
-	 *
-	 * @throws \ReflectionException
-	 */
-	public function __construct(Lifespan $plugin){
-		$this->plugin = $plugin;
+    /**
+     * EntityEventListener constructor.
+     *
+     * @param Lifespan $plugin
+     *
+     * @throws \ReflectionException
+     */
+    public function __construct(Lifespan $plugin){
+        $this->plugin = $plugin;
 
-		$reflection = new \ReflectionClass(Entity::class);
-		$this->property = $reflection->getProperty("age");
-		$this->property->setAccessible(true);
-	}
+        $reflection = new \ReflectionClass(Entity::class);
+        $this->property = $reflection->getProperty("age");
+        $this->property->setAccessible(true);
+    }
 
-	/**
-	 * @param EntitySpawnEvent $event
-	 */
-	public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
-		$entity = $event->getEntity();
-		if($entity instanceof ItemEntity){
-			$this->property->setValue($entity, min(6000, max(-0x7fff, 6000 - $this->plugin->getItemLifespan())));
-		}elseif($entity instanceof Arrow){
-			$this->property->setValue($entity, min(1200, max(-0x7fff, 1200 - $this->plugin->getArrowLifespan())));
-		}
-	}
+    /**
+     * @param EntitySpawnEvent $event
+     */
+    public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
+        $entity = $event->getEntity();
+        if($entity instanceof ItemEntity){
+            $this->property->setValue($entity, min(6000, max(-0x7fff, 6000 - $this->plugin->getItemLifespan())));
+        }elseif($entity instanceof Arrow){
+            $this->property->setValue($entity, min(1200, max(-0x7fff, 1200 - $this->plugin->getArrowLifespan())));
+        }
+    }
 }
