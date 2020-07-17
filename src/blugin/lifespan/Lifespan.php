@@ -31,17 +31,18 @@ use blugin\lifespan\listener\EntityEventListener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
-use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
+use pocketmine\nbt\BigEndianNbtSerializer;
 use pocketmine\nbt\BigEndianNBTStream;
+use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\ShortTag;
-use pocketmine\permission\Permission;
+use pocketmine\nbt\TreeRoot;
 use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Limits;
 use pocketmine\utils\SingletonTrait;
 
 class Lifespan extends PluginBase implements Listener{
@@ -69,19 +70,21 @@ class Lifespan extends PluginBase implements Listener{
     ];
 
     /** @var int (short) */
-    private $itemLifespan = 6000; //default: 5 minutes
+    private $itemLifespan = ItemEntity::DEFAULT_DESPAWN_DELAY; //default: 5 minutes
 
     /** @var int (short) */
     private $arrowLifespan = 1200; //default: 60 seconds
 
     /**
      * Called when the plugin is loaded, before calling onEnable()
+     *
+     * @throws \ReflectionException
      */
     public function onLoad() : void{
         self::setInstance($this);
 
-        $reflection = new \ReflectionClass(Entity::class);
-        $this->property = $reflection->getProperty("age");
+        $reflection = new \ReflectionClass(Arrow::class);
+        $this->property = $reflection->getProperty("collideTicks");
         $this->property->setAccessible(true);
     }
 
@@ -114,7 +117,7 @@ class Lifespan extends PluginBase implements Listener{
         ]));
 
         //Register main command
-        $command = new PluginCommand($config->getNested("command.name"), $this);
+        $command = new PluginCommand($config->getNested("command.name"), $this, $this);
         $command->setPermission("lifespan.cmd");
         $command->setAliases($config->getNested("command.aliases"));
         $command->setUsage($this->language->translate("commands.lifespan.usage"));
@@ -125,28 +128,37 @@ class Lifespan extends PluginBase implements Listener{
         $permission = PermissionManager::getInstance()->getPermission("lifespan.cmd");
         $defaultValue = $config->getNested("permission.main");
         if($permission !== null && $defaultValue !== null){
-            $permission->setDefault(Permission::getByName($config->getNested("permission.main")));
+            $permission->setDefault($config->getNested("permission.main"));
         }
 
         //Load lifespan data from nbt
-        if(file_exists($file = "{$this->getDataFolder()}data.dat")){
+        $file = "{$this->getDataFolder()}data.dat";
+        if(file_exists($file)){
+            $contents = @file_get_contents($file);
+            if($contents === false)
+                throw new \RuntimeException("Failed to read LifeSpan data file \"$file\" (permission denied?)");
+
+            $decompressed = @zlib_decode($contents);
+            if($decompressed === false){
+                throw new \RuntimeException("Failed to decompress raw data for LifeSpan");
+            }
+
             try{
-                /** @var CompoundTag $namedTag */
-                $namedTag = (new BigEndianNBTStream())->readCompressed(file_get_contents($file));
-                $this->itemLifespan = $namedTag->getShort(self::TAG_ITEM);
-                $this->arrowLifespan = $namedTag->getShort(self::TAG_ARROW);
-            }catch(\Throwable $e){
-                rename($file, "{$file}.bak");
-                $this->getLogger()->warning("Error occurred loading data.dat");
+                $tag = (new BigEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
+            }catch(NbtDataException $e){
+                throw new \RuntimeException("Failed to decode NBT data for LifeSpan");
+            }
+
+            if($tag instanceof CompoundTag){
+                $this->itemLifespan = $tag->getShort(self::TAG_ITEM);
+                $this->arrowLifespan = $tag->getShort(self::TAG_ARROW);
+            }else{
+                throw new \RuntimeException("The file is not in the NBT-CompoundTag format : $file");
             }
         }
 
         //Register event listeners
-        try{
-            $this->getServer()->getPluginManager()->registerEvents(new EntityEventListener($this), $this);
-        }catch(\ReflectionException $e){
-            $this->setEnabled(false);
-        }
+        $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
     /**
@@ -155,13 +167,19 @@ class Lifespan extends PluginBase implements Listener{
      */
     public function onDisable() : void{
         //Save lifespan data to nbt
+        $tag = CompoundTag::create();
+        $tag->setShort(self::TAG_ITEM, $this->itemLifespan);
+        $tag->setShort(self::TAG_ARROW, $this->arrowLifespan);
+
+        $nbt = new BigEndianNbtSerializer();
         try{
-            file_put_contents("{$this->getDataFolder()}data.dat", (new BigEndianNBTStream())->writeCompressed(new CompoundTag("", [
-                new ShortTag(self::TAG_ITEM, $this->itemLifespan),
-                new ShortTag(self::TAG_ARROW, $this->arrowLifespan)
-            ])));
-        }catch(\Throwable $e){
-            $this->getLogger()->warning("Error occurred saving data.dat");
+            file_put_contents("{$this->getDataFolder()}data.dat", zlib_encode($nbt->write(new TreeRoot($tag)), ZLIB_ENCODING_GZIP));
+        }catch(\ErrorException $e){
+            $this->getLogger()->critical($this->getServer()->getLanguage()->translateString("pocketmine.data.saveError", [
+                "LifeSpan-data",
+                $e->getMessage()
+            ]));
+            $this->getLogger()->logException($e);
         }
     }
 
@@ -206,14 +224,16 @@ class Lifespan extends PluginBase implements Listener{
     }
 
     /**
+     * @priority MONITOR
+     *
      * @param EntitySpawnEvent $event
      */
     public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
         $entity = $event->getEntity();
         if($entity instanceof ItemEntity){
-            $this->property->setValue($entity, min(6000, max(-0x7fff, 6000 - $this->getItemLifespan())));
+            $entity->setDespawnDelay(min(Limits::INT16_MAX, max(0, $this->getItemLifespan())));
         }elseif($entity instanceof Arrow){
-            $this->property->setValue($entity, min(1200, max(-0x7fff, 1200 - $this->getArrowLifespan())));
+            $this->property->setValue($entity, min(Limits::INT16_MAX, max(0, $this->getArrowLifespan())));
         }
     }
 
@@ -237,46 +257,36 @@ class Lifespan extends PluginBase implements Listener{
         return false;
     }
 
-    /**
-     * @return PluginLang
-     */
+    /** @return PluginLang */
     public function getLanguage() : PluginLang{
         return $this->language;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getItemLifespan() : int{
         return $this->itemLifespan;
     }
 
-    /**
-     * @param int $value (shrot)
-     */
+    /** @param int $value (short) */
     public function setItemLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
-        }elseif($value > 0x7fff){
+        }elseif($value > Limits::INT16_MAX){
             throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
         }
         $this->itemLifespan = $value;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getArrowLifespan() : int{
         return $this->arrowLifespan;
     }
 
-    /**
-     * @param int $value (shrot)
-     */
+    /** @param int $value (short) */
     public function setArrowLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
-        }elseif($value > 0x7fff){
+        }elseif($value > Limits::INT16_MAX){
             throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
         }
         $this->arrowLifespan = $value;
