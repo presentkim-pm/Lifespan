@@ -2,9 +2,9 @@
 name: Lifespan
 main: blugin\lifespan\Lifespan
 version: 2.0.0
-api: [3.0.0, 4.0.0]
 author: PresentKim
 description: Set item&arrow's lifespan!
+api: [4.0.0]
 depend: [libPluginLang]
 
 permissions:
