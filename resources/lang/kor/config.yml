@@ -21,11 +21,11 @@ command:
     #하위 명령어들의 설정
     #메인 명령어 설정과 동일합니다
     item:
-      name: "Item"
-      aliases: ["i", "itementity"]
+      name: "아이템"
+      aliases: ["i", "item", "itementity"]
     arrow:
-      name: "Arrow"
-      aliases: ["a", "arrowentity"]
+      name: "화살"
+      aliases: ["a", "arrow", "arrowentity"]
 
 
 permission:
