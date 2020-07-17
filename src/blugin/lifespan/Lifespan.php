@@ -88,8 +88,9 @@ class Lifespan extends PluginBase implements Listener{
      * Called when the plugin is enabled
      */
     public function onEnable() : void{
-        //Load config file
+        //Load config and language
         $config = $this->getConfig();
+        $this->loadLanguage($config->getNested("settings.language"));
 
         //Load type map from config file
         $this->typeMap = [];
@@ -99,13 +100,6 @@ class Lifespan extends PluginBase implements Listener{
                 $this->typeMap[strtolower($aliases)] = $type;
             }
         }
-
-        //Load language file
-        $this->loadLanguage($config->getNested("settings.language"));
-        $this->getLogger()->info($this->language->translate("language.selected", [
-            $this->language->getName(),
-            $this->language->getLang()
-        ]));
 
         //Register main command
         $command = new PluginCommand($config->getNested("command.name"), $this, $this);
