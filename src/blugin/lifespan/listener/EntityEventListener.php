@@ -24,9 +24,9 @@
 
 declare(strict_types=1);
 
-namespace kim\present\lifespan\listener;
+namespace blugin\lifespan\listener;
 
-use kim\present\lifespan\Lifespan;
+use blugin\lifespan\Lifespan;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;

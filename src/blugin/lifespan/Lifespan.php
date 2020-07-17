@@ -24,10 +24,10 @@
 
 declare(strict_types=1);
 
-namespace kim\present\lifespan;
+namespace blugin\lifespan;
 
-use kim\present\lifespan\lang\PluginLang;
-use kim\present\lifespan\listener\EntityEventListener;
+use blugin\lifespan\lang\PluginLang;
+use blugin\lifespan\listener\EntityEventListener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;

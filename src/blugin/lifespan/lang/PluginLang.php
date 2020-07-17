@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace kim\present\lifespan\lang;
+namespace blugin\lifespan\lang;
 
 use pocketmine\plugin\PluginBase;
 
