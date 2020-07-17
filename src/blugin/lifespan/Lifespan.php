@@ -42,26 +42,19 @@ use pocketmine\nbt\tag\ShortTag;
 use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\SingletonTrait;
 
 class Lifespan extends PluginBase implements Listener{
+    use SingletonTrait;
+
     public const TYPE_ITEM = 0;
     public const TYPE_ARROW = 1;
 
     public const TAG_ITEM = "Item";
     public const TAG_ARROW = "Arrow";
 
-    /** @var Lifespan */
-    private static $instance = null;
-
     /** @var \ReflectionProperty */
     private $property = null;
-
-    /**
-     * @return Lifespan
-     */
-    public static function getInstance() : Lifespan{
-        return self::$instance;
-    }
 
     /** @var PluginLang */
     private $language;
@@ -85,7 +78,7 @@ class Lifespan extends PluginBase implements Listener{
      * Called when the plugin is loaded, before calling onEnable()
      */
     public function onLoad() : void{
-        self::$instance = $this;
+        self::setInstance($this);
 
         $reflection = new \ReflectionClass(Entity::class);
         $this->property = $reflection->getProperty("age");
