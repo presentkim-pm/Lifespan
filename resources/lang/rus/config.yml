@@ -9,8 +9,6 @@ settings:
   #Доступно: eng, kor, rus
   language: "rus"
 
-  update-check: false
-
 
 command:
   #Название комманды
