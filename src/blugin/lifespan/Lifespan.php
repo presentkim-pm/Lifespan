@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace blugin\lifespan;
 
 use blugin\lifespan\lang\PluginLang;
-use blugin\lifespan\listener\EntityEventListener;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
@@ -36,7 +35,6 @@ use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
 use pocketmine\nbt\BigEndianNbtSerializer;
-use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
