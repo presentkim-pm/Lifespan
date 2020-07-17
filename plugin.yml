@@ -10,4 +10,5 @@ permissions:
   lifespan.cmd:
     description: Lifespan command
     default: op
+depend: [libPluginLanguage]
 ...

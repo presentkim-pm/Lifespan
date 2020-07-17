@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace blugin\lifespan;
 
-use blugin\lifespan\lang\PluginLang;
+use blugin\lib\lang\LanguageTrait;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginCommand;
@@ -45,6 +45,7 @@ use pocketmine\utils\SingletonTrait;
 
 class Lifespan extends PluginBase implements Listener{
     use SingletonTrait;
+    use LanguageTrait;
 
     public const TYPE_ITEM = 0;
     public const TYPE_ARROW = 1;
@@ -54,9 +55,6 @@ class Lifespan extends PluginBase implements Listener{
 
     /** @var \ReflectionProperty */
     private $property = null;
-
-    /** @var PluginLang */
-    private $language;
 
     /** @var int[] */
     private $typeMap;
@@ -90,11 +88,6 @@ class Lifespan extends PluginBase implements Listener{
      * Called when the plugin is enabled
      */
     public function onEnable() : void{
-        //Save default resources
-        $this->saveResource("lang/eng/lang.ini", false);
-        $this->saveResource("lang/kor/lang.ini", false);
-        $this->saveResource("lang/language.list", false);
-
         //Load config file
         $config = $this->getConfig();
 
@@ -108,7 +101,7 @@ class Lifespan extends PluginBase implements Listener{
         }
 
         //Load language file
-        $this->language = new PluginLang($this, $config->getNested("settings.language"));
+        $this->loadLanguage($config->getNested("settings.language"));
         $this->getLogger()->info($this->language->translate("language.selected", [
             $this->language->getName(),
             $this->language->getLang()
@@ -233,31 +226,6 @@ class Lifespan extends PluginBase implements Listener{
         }elseif($entity instanceof Arrow){
             $this->property->setValue($entity, min(Limits::INT16_MAX, max(0, $this->getArrowLifespan())));
         }
-    }
-
-    /**
-     * @Override for multilingual support of the config file
-     *
-     * @return bool
-     */
-    public function saveDefaultConfig() : bool{
-        $resource = $this->getResource("lang/{$this->getServer()->getLanguage()->getLang()}/config.yml");
-        if($resource === null){
-            $resource = $this->getResource("lang/" . PluginLang::FALLBACK_LANGUAGE . "/config.yml");
-        }
-
-        if(!file_exists($configFile = "{$this->getDataFolder()}config.yml")){
-            $ret = stream_copy_to_stream($resource, $fp = fopen($configFile, "wb")) > 0;
-            fclose($fp);
-            fclose($resource);
-            return $ret;
-        }
-        return false;
-    }
-
-    /** @return PluginLang */
-    public function getLanguage() : PluginLang{
-        return $this->language;
     }
 
     /** @return int */
