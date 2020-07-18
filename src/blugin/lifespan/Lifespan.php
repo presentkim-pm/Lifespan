@@ -81,6 +81,8 @@ class Lifespan extends PluginBase implements Listener, LanguageHolder{
     public function onLoad() : void{
         self::setInstance($this);
 
+        $this->loadLanguage($this->getConfig()->getNested("settings.language"));
+
         $reflection = new \ReflectionClass(Arrow::class);
         $this->property = $reflection->getProperty("collideTicks");
         $this->property->setAccessible(true);
@@ -90,9 +92,7 @@ class Lifespan extends PluginBase implements Listener, LanguageHolder{
      * Called when the plugin is enabled
      */
     public function onEnable() : void{
-        //Load config and language
         $config = $this->getConfig();
-        $this->loadLanguage($config->getNested("settings.language"));
 
         //Load type map from config file
         $this->typeMap = [];
