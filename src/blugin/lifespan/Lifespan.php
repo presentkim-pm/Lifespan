@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace blugin\lifespan;
 
+use blugin\lib\lang\LanguageHolder;
 use blugin\lib\lang\LanguageTrait;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -44,7 +45,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Limits;
 use pocketmine\utils\SingletonTrait;
 
-class Lifespan extends PluginBase implements Listener{
+class Lifespan extends PluginBase implements Listener, LanguageHolder{
     use SingletonTrait;
     use LanguageTrait;
 
