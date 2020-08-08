@@ -37,10 +37,6 @@ use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
-use pocketmine\nbt\BigEndianNbtSerializer;
-use pocketmine\nbt\NbtDataException;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\TreeRoot;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Limits;
 use pocketmine\utils\SingletonTrait;
@@ -67,10 +63,10 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     ];
 
     /** @var int (short) */
-    private $itemLifespan = ItemEntity::DEFAULT_DESPAWN_DELAY; //default: 5 minutes
+    private $itemLifespan = 6000;
 
     /** @var int (short) */
-    private $arrowLifespan = 1200; //default: 60 seconds
+    private $arrowLifespan = 1200;
 
     /**
      * Called when the plugin is loaded, before calling onEnable()
@@ -98,31 +94,24 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
         $this->recalculatePermissions();
         $this->getServer()->getCommandMap()->register($this->getName(), $command);
 
-        //Load lifespan data from nbt
-        $file = "{$this->getDataFolder()}data.dat";
-        if(file_exists($file)){
-            $contents = @file_get_contents($file);
-            if($contents === false)
-                throw new \RuntimeException("Failed to read LifeSpan data file \"$file\" (permission denied?)");
-
-            $decompressed = @zlib_decode($contents);
-            if($decompressed === false){
-                throw new \RuntimeException("Failed to decompress raw data for LifeSpan");
-            }
-
-            try{
-                $tag = (new BigEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
-            }catch(NbtDataException $e){
-                throw new \RuntimeException("Failed to decode NBT data for LifeSpan");
-            }
-
-            if($tag instanceof CompoundTag){
-                $this->itemLifespan = $tag->getShort(self::TAG_ITEM);
-                $this->arrowLifespan = $tag->getShort(self::TAG_ARROW);
-            }else{
-                throw new \RuntimeException("The file is not in the NBT-CompoundTag format : $file");
-            }
+        //Load lifespan data
+        $dataPath = "{$this->getDataFolder()}lifespan.json";
+        if(!file_exists($dataPath)){
+            $this->itemLifespan = 6000;  //default:  5 minutes
+            $this->arrowLifespan = 1200; //default: 60 seconds
+            return;
         }
+
+        $content = file_get_contents($dataPath);
+        if($content === false)
+            throw new \RuntimeException("Unable to load lifespan.json file");
+
+        $data = json_decode($content, true);
+        if(!is_array($data) || count($data) < 2 || !isset($data[self::TAG_ITEM]) || !is_numeric($data[self::TAG_ITEM]) || !isset($data[self::TAG_ARROW]) || !is_numeric($data[self::TAG_ARROW])){
+            throw new \RuntimeException("Invalid data in lifespan.json file. Must be int array");
+        }
+        $this->setItemLifespan((int) $data[self::TAG_ITEM]);
+        $this->setArrowLifespan((int) $data[self::TAG_ARROW]);
 
         //Register event listeners
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
@@ -136,21 +125,12 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
         //Unregister main command with subcommands
         $this->getServer()->getCommandMap()->unregister($this->getMainCommand());
 
-        //Save lifespan data to nbt
-        $tag = CompoundTag::create();
-        $tag->setShort(self::TAG_ITEM, $this->itemLifespan);
-        $tag->setShort(self::TAG_ARROW, $this->arrowLifespan);
-
-        $nbt = new BigEndianNbtSerializer();
-        try{
-            file_put_contents("{$this->getDataFolder()}data.dat", zlib_encode($nbt->write(new TreeRoot($tag)), ZLIB_ENCODING_GZIP));
-        }catch(\ErrorException $e){
-            $this->getLogger()->critical($this->getServer()->getLanguage()->translateString("pocketmine.data.saveError", [
-                "LifeSpan-data",
-                $e->getMessage()
-            ]));
-            $this->getLogger()->logException($e);
-        }
+        //Save lifespan data
+        $dataPath = "{$this->getDataFolder()}lifespan.json";
+        file_put_contents($dataPath, json_encode([
+            self::TAG_ITEM => $this->itemLifespan,
+            self::TAG_ARROW => $this->arrowLifespan
+        ], JSON_PRETTY_PRINT));
     }
 
     /**
