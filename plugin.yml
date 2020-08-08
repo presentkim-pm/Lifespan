@@ -5,10 +5,17 @@ version: 2.0.0
 api: [4.0.0]
 authors: ['Blugin-team', 'PresentKim']
 description: Set item and arrow's lifespan!
-depend: [libPluginLang]
+depend: [libTranslator, libSubcommands]
 
 permissions:
   lifespan.cmd:
     description: Lifespan command
     default: op
+    children:
+      lifespan.cmd.item:
+        description: Lifespan command - item
+        default: op
+      lifespan.cmd.arrow:
+        description: Lifespan command - arrow
+        default: op
 ...

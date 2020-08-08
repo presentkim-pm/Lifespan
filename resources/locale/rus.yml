@@ -4,16 +4,14 @@
 # Translated by @SteinsSquad
 # Plugin author @PresentKim
 
-settings:
-  #Настройки мульти-язычности
-  #Доступно: eng, kor, rus
-  language: "rus"
-
-
 command:
   #Название комманды
   #Вы можете изменить это так, как захотите
   name: "lifespan"
+
+  #Право основной комманды
+  #Вы можете изменить это так, как захотите
+  permission: "op"
 
   #Псевдоним основной комманды
   #Вы можете изменять, удалять, добавлять это так, как захотите
@@ -25,12 +23,8 @@ command:
     item:
       name: "Item"
       aliases: ["i", "itementity"]
+      permission: "op"
     arrow:
       name: "Arrow"
       aliases: ["a", "arrowentity"]
-
-
-permission:
-  #Право основной комманды
-  #Вы можете изменить это так, как захотите
-  main: "op"
+      permission: "op"

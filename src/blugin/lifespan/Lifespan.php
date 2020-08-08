@@ -27,11 +27,12 @@ declare(strict_types=1);
 
 namespace blugin\lifespan;
 
-use blugin\lib\lang\LanguageHolder;
-use blugin\lib\lang\LanguageTrait;
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
+use blugin\lib\command\SubcommandTrait;
+use blugin\lib\translator\MultilingualConfigTrait;
+use blugin\lib\translator\TranslatorHolder;
+use blugin\lib\translator\TranslatorHolderTrait;
+use blugin\lifespan\command\ArrowSubcommand;
+use blugin\lifespan\command\ItemSubcommand;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
@@ -40,14 +41,12 @@ use pocketmine\nbt\BigEndianNbtSerializer;
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\TreeRoot;
-use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Limits;
 use pocketmine\utils\SingletonTrait;
 
-class Lifespan extends PluginBase implements Listener, LanguageHolder{
-    use SingletonTrait;
-    use LanguageTrait;
+class Lifespan extends PluginBase implements Listener, TranslatorHolder{
+    use SingletonTrait, TranslatorHolderTrait, MultilingualConfigTrait, SubcommandTrait;
 
     public const TYPE_ITEM = 0;
     public const TYPE_ARROW = 1;
@@ -92,31 +91,12 @@ class Lifespan extends PluginBase implements Listener, LanguageHolder{
      * Called when the plugin is enabled
      */
     public function onEnable() : void{
-        $config = $this->getConfig();
-
-        //Load type map from config file
-        $this->typeMap = [];
-        foreach($this->typeTagMap as $type => $tag){
-            $this->typeMap[strtolower($config->getNested("command.children.{$tag}.name"))] = $type;
-            foreach($config->getNested("command.children.{$tag}.aliases") as $key => $aliases){
-                $this->typeMap[strtolower($aliases)] = $type;
-            }
-        }
-
-        //Register main command
-        $command = new PluginCommand($config->getNested("command.name"), $this, $this);
-        $command->setPermission("lifespan.cmd");
-        $command->setAliases($config->getNested("command.aliases"));
-        $command->setUsage($this->language->translate("commands.lifespan.usage"));
-        $command->setDescription($this->language->translate("commands.lifespan.description"));
+        //Register main command with subcommands
+        $command = $this->getMainCommand();
+        $command->registerSubcommand(new ItemSubcommand($command));
+        $command->registerSubcommand(new ArrowSubcommand($command));
+        $this->recalculatePermissions();
         $this->getServer()->getCommandMap()->register($this->getName(), $command);
-
-        //Load permission's default value from config
-        $permission = PermissionManager::getInstance()->getPermission("lifespan.cmd");
-        $defaultValue = $config->getNested("permission.main");
-        if($permission !== null && $defaultValue !== null){
-            $permission->setDefault($config->getNested("permission.main"));
-        }
 
         //Load lifespan data from nbt
         $file = "{$this->getDataFolder()}data.dat";
@@ -153,6 +133,9 @@ class Lifespan extends PluginBase implements Listener, LanguageHolder{
      * Use this to free open things and finish actions
      */
     public function onDisable() : void{
+        //Unregister main command with subcommands
+        $this->getServer()->getCommandMap()->unregister($this->getMainCommand());
+
         //Save lifespan data to nbt
         $tag = CompoundTag::create();
         $tag->setShort(self::TAG_ITEM, $this->itemLifespan);
@@ -168,46 +151,6 @@ class Lifespan extends PluginBase implements Listener, LanguageHolder{
             ]));
             $this->getLogger()->logException($e);
         }
-    }
-
-    /**
-     * @param CommandSender $sender
-     * @param Command       $command
-     * @param string        $label
-     * @param string[]      $args
-     *
-     * @return bool
-     */
-    public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
-        if(isset($args[1])){
-            $type = $this->typeMap[strtolower($args[0])] ?? null;
-            if($type === null){
-                $sender->sendMessage($this->language->translate("commands.lifespan.failure.invalid", [$args[0]]));
-            }elseif(!is_numeric($args[1])){
-                $sender->sendMessage($this->language->translate("commands.generic.num.notNumber", [$args[1]]));
-            }else{
-                $lifespan = (int) $args[1];
-                if($lifespan < 0){
-                    $sender->sendMessage($this->language->translate("commands.generic.num.tooSmall", [
-                        (string) $lifespan,
-                        (string) 0
-                    ]));
-                }elseif($lifespan > 0x7fff){
-                    $sender->sendMessage($this->language->translate("commands.generic.num.tooBig", [
-                        (string) $lifespan,
-                        (string) 0x7fff
-                    ]));
-                }else{
-                    $type ? $this->setArrowLifespan($lifespan) : $this->setItemLifespan($lifespan);
-                    $sender->sendMessage($this->language->translate("commands.lifespan.success", [
-                        $this->getConfig()->getNested("command.children.{$this->typeTagMap[$type]}.name"),
-                        (string) $lifespan
-                    ]));
-                }
-            }
-            return true;
-        }
-        return false;
     }
 
     /**
