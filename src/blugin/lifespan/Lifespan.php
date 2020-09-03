@@ -43,20 +43,12 @@ use pocketmine\utils\SingletonTrait;
 class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     use SingletonTrait, TranslatorHolderTrait, MultilingualConfigTrait, SubcommandTrait;
 
-    public const TYPE_ITEM = 0;
-    public const TYPE_ARROW = 1;
 
     public const TAG_ITEM = "Item";
     public const TAG_ARROW = "Arrow";
 
     /** @var int[] */
     private $typeMap;
-
-    /** @var string[] */
-    private $typeTagMap = [
-        self::TYPE_ITEM => "item",
-        self::TYPE_ARROW => "arrow"
-    ];
 
     /** @var int (short) */
     private $itemLifespan = 6000;
