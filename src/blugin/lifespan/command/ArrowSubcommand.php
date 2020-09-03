@@ -30,12 +30,10 @@ namespace blugin\lifespan\command;
 use blugin\lifespan\Lifespan;
 
 class ArrowSubcommand extends LifespanSubcommand{
-    /** @return string */
     public function getLabel() : string{
         return "arrow";
     }
 
-    /** @param int $lifespan */
     protected function setLifespan(int $lifespan) : void{
         /** @var Lifespan $plugin */
         $plugin = $this->getMainCommand()->getOwningPlugin();

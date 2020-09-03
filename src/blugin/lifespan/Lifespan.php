@@ -67,11 +67,6 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     /** @var int (short) */
     private $arrowLifespan = 1200;
 
-    /**
-     * Called when the plugin is loaded, before calling onEnable()
-     *
-     * @throws \ReflectionException
-     */
     public function onLoad() : void{
         self::setInstance($this);
 
@@ -82,9 +77,6 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
         $this->property->setAccessible(true);
     }
 
-    /**
-     * Called when the plugin is enabled
-     */
     public function onEnable() : void{
         //Register main command with subcommands
         $command = $this->getMainCommand();
@@ -116,10 +108,6 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
 
-    /**
-     * Called when the plugin is disabled
-     * Use this to free open things and finish actions
-     */
     public function onDisable() : void{
         //Unregister main command with subcommands
         $this->getServer()->getCommandMap()->unregister($this->getMainCommand());
@@ -134,8 +122,6 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
 
     /**
      * @priority MONITOR
-     *
-     * @param EntitySpawnEvent $event
      */
     public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
         $entity = $event->getEntity();
@@ -146,12 +132,10 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
         }
     }
 
-    /** @return int */
     public function getItemLifespan() : int{
         return $this->itemLifespan;
     }
 
-    /** @param int $value (short) */
     public function setItemLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
@@ -161,12 +145,10 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
         $this->itemLifespan = $value;
     }
 
-    /** @return int */
     public function getArrowLifespan() : int{
         return $this->arrowLifespan;
     }
 
-    /** @param int $value (short) */
     public function setArrowLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");

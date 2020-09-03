@@ -33,10 +33,7 @@ use pocketmine\command\CommandSender;
 
 abstract class LifespanSubcommand extends Subcommand{
     /**
-     * @param CommandSender $sender
-     * @param string[]      $args = []
-     *
-     * @return bool
+     * @param string[] $args = []
      */
     public function execute(CommandSender $sender, array $args = []) : bool{
         if(!isset($args[0]))
@@ -49,6 +46,5 @@ abstract class LifespanSubcommand extends Subcommand{
         return true;
     }
 
-    /** @param int $lifespan */
     abstract protected function setLifespan(int $lifespan) : void;
 }
