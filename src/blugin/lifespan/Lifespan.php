@@ -49,9 +49,6 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     public const TAG_ITEM = "Item";
     public const TAG_ARROW = "Arrow";
 
-    /** @var \ReflectionProperty */
-    private $property = null;
-
     /** @var int[] */
     private $typeMap;
 
@@ -72,9 +69,6 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
 
         $this->loadLanguage($this->getConfig()->getNested("settings.language"));
 
-        $reflection = new \ReflectionClass(Arrow::class);
-        $this->property = $reflection->getProperty("collideTicks");
-        $this->property->setAccessible(true);
     }
 
     public function onEnable() : void{
@@ -126,9 +120,22 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
         $entity = $event->getEntity();
         if($entity instanceof ItemEntity){
-            $entity->setDespawnDelay(min(0x7fff, max(0, $this->getItemLifespan())));
+            static $itemLifeProperty = null;
+            if($itemLifeProperty === null){
+                $itemReflection = new \ReflectionClass(ItemEntity::class);
+                $itemLifeProperty = $itemReflection->getProperty("age");
+                $itemLifeProperty->setAccessible(true);
+            }
+            $itemLifeProperty->setValue($entity, min(0x7fff, max(0, 6000 - $this->getItemLifespan())));
         }elseif($entity instanceof Arrow){
-            $this->property->setValue($entity, min(0x7fff, max(0, $this->getArrowLifespan())));
+            static $arrowLifeProperty = null;
+            if($arrowLifeProperty === null){
+                $arrowReflection = new \ReflectionClass(Arrow::class);
+                $arrowLifeProperty = $arrowReflection->getProperty("collideTicks");
+                $arrowLifeProperty->setAccessible(true);
+            }
+
+            $arrowLifeProperty->setValue($entity, min(0x7fff, max(0, 1200 - $this->getArrowLifespan())));
         }
     }
 
