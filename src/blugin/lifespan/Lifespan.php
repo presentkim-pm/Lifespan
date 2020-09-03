@@ -124,7 +124,8 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
                 $itemLifeProperty = $itemReflection->getProperty("age");
                 $itemLifeProperty->setAccessible(true);
             }
-            $itemLifeProperty->setValue($entity, min(0x7fff, max(0, 6000 - $this->getItemLifespan())));
+            $before = $itemLifeProperty->getValue($entity);
+            $itemLifeProperty->setValue($entity, min(0x7fff, max(0, $before + 6000 - $this->getItemLifespan())));
         }elseif($entity instanceof Arrow){
             static $arrowLifeProperty = null;
             if($arrowLifeProperty === null){
@@ -133,7 +134,8 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
                 $arrowLifeProperty->setAccessible(true);
             }
 
-            $arrowLifeProperty->setValue($entity, min(0x7fff, max(0, 1200 - $this->getArrowLifespan())));
+            $before = $arrowLifeProperty->getValue($entity);
+            $arrowLifeProperty->setValue($entity, min(0x7fff, max(0, $before + 1200 - $this->getArrowLifespan())));
         }
     }
 
