@@ -1,8 +1,8 @@
-# Advanced configuration file for Lifespan plugin
+# Advanced configuration file for LifeSpan plugin
 # Some of these settings are safe, others can break your server if modified incorrectly
 # New settings/defaults won't appear automatically on this file when upgrading
 
-command:
+lifespan:
   #Name of main command
   #You can change this to be what you want
   name: "lifespan"
@@ -13,16 +13,16 @@ command:
 
   #Aliases of main command
   #You can add, replace, or remove them as you like
-  aliases: ["lifetime", "ls"]
+  aliases: ["lifetime", "ls", "수명"]
 
   children:
     #Setting of subcommands
     #Same as main command setting
     item:
       name: "Item"
-      aliases: ["i", "itementity"]
+      aliases: ["i", "itementity", "아이템"]
       permission: "op"
     arrow:
       name: "Arrow"
-      aliases: ["a", "arrowentity"]
+      aliases: ["a", "arrowentity", "화살"]
       permission: "op"

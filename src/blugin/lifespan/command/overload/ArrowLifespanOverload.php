@@ -25,26 +25,22 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifespan\command;
+namespace blugin\lifespan\command\overload;
 
-use blugin\lib\command\Subcommand;
-use blugin\lib\command\validator\defaults\NumberArgumentValidator;
+use blugin\lifespan\lib\command\BaseCommand;
+use blugin\lifespan\lib\command\overload\Overload;
+use blugin\lifespan\Lifespan;
 use pocketmine\command\CommandSender;
 
-abstract class LifespanSubcommand extends Subcommand{
-    /**
-     * @param string[] $args = []
-     */
-    public function execute(CommandSender $sender, array $args = []) : bool{
-        if(!isset($args[0]))
-            return false;
-
-        $lifespan = (int) NumberArgumentValidator::validateRange($args[0], 0, 0x7fff);
-
-        $this->setLifespan($lifespan);
-        $this->sendMessage($sender, "success", [(string) $lifespan]);
-        return true;
+class ArrowLifespanOverload extends LifespanOverload{
+    public function __construct(BaseCommand $baseCommand){
+        parent::__construct($baseCommand, "arrow");
     }
 
-    abstract protected function setLifespan(int $lifespan) : void;
+    /** @param mixed[] $args name => value */
+    public function handle(CommandSender $sender, array $args, Overload $overload) : bool{
+        Lifespan::getInstance()->setArrowLifespan((int) ($args["seconds"] * 20));
+        $this->sendMessage($sender, "success", [(string) $args["seconds"]]);
+        return true;
+    }
 }

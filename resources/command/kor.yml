@@ -1,8 +1,8 @@
-# Lifespan 플러그인을 위한 고급 설정 파일
+# LifeSpan 플러그인을 위한 고급 설정 파일
 # 이 설정들 중 일부는 안전하지만, 또 다른 것들은 잘못 수정했을 경우 서버에 오류가 발생할 수 있습니다
 # 새로운 설정/기본은 이 파일을 업그레이드할 때 자동으로 나타나지 않습니다
 
-command:
+lifespan:
   #메인 명령어의 이름
   #원하는대로 수정할 수 있습니다
   name: "lifespan"
@@ -13,16 +13,16 @@ command:
 
   #메인 명령어의 별칭들
   #원하는대로 추가, 수정, 삭제할 수 있습니다
-  aliases: ["lifetime", "ls"]
+  aliases: ["lifetime", "ls", "수명"]
 
   children:
     #하위 명령어들의 설정
     #메인 명령어 설정과 동일합니다
     item:
-      name: "아이템"
-      aliases: ["i", "item", "itementity"]
+      name: "Item"
+      aliases: ["i", "itementity", "아이템"]
       permission: "op"
     arrow:
-      name: "화살"
-      aliases: ["a", "arrow", "arrowentity"]
+      name: "Arrow"
+      aliases: ["a", "arrowentity", "화살"]
       permission: "op"

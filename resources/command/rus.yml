@@ -2,9 +2,8 @@
 # Некоторые из этих настроек являются безопасными, другие могут сломать ваш сервер, если они изменены неправильно
 # Новые настройки / значения по умолчанию не будут отображаться автоматически в этом файле при обновлении
 # Translated by @SteinsSquad
-# Plugin author @PresentKim
 
-command:
+lifespan:
   #Название комманды
   #Вы можете изменить это так, как захотите
   name: "lifespan"
@@ -15,16 +14,16 @@ command:
 
   #Псевдоним основной комманды
   #Вы можете изменять, удалять, добавлять это так, как захотите
-  aliases: ["lifetime", "ls"]
+  aliases: ["lifetime", "ls", "수명"]
 
   children:
     #Настройка суб-комманд
     #Также, как с настройкой комманды
     item:
       name: "Item"
-      aliases: ["i", "itementity"]
+      aliases: ["i", "itementity", "아이템"]
       permission: "op"
     arrow:
       name: "Arrow"
-      aliases: ["a", "arrowentity"]
+      aliases: ["a", "arrowentity", "화살"]
       permission: "op"

@@ -27,22 +27,27 @@ declare(strict_types=1);
 
 namespace blugin\lifespan;
 
-use blugin\lib\command\SubcommandTrait;
-use blugin\lib\translator\MultilingualConfigTrait;
-use blugin\lib\translator\TranslatorHolder;
-use blugin\lib\translator\TranslatorHolderTrait;
-use blugin\lifespan\command\ArrowSubcommand;
-use blugin\lifespan\command\ItemSubcommand;
+use blugin\lifespan\command\overload\ArrowLifespanOverload;
+use blugin\lifespan\command\overload\ItemLifespanOverload;
+use blugin\lifespan\lib\command\BaseCommandTrait;
+use blugin\lifespan\lib\command\listener\AvaliableCommandListener;
+use blugin\lifespan\lib\command\listener\EnumUpdateListener;
+use blugin\lifespan\lib\translator\traits\TranslatorHolderTrait;
+use blugin\lifespan\lib\translator\TranslatorHolder;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\SingletonTrait;
 
 class Lifespan extends PluginBase implements Listener, TranslatorHolder{
-    use SingletonTrait, TranslatorHolderTrait, MultilingualConfigTrait, SubcommandTrait;
+    use TranslatorHolderTrait, BaseCommandTrait;
 
+    private static $instance;
+
+    public static function getInstance() : Lifespan{
+        return self::$instance;
+    }
 
     public const TAG_ITEM = "Item";
     public const TAG_ARROW = "Arrow";
@@ -57,18 +62,17 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     private $arrowLifespan = 1200;
 
     public function onLoad() : void{
-        self::setInstance($this);
+        self::$instance = $this;
 
-        $this->loadLanguage($this->getConfig()->getNested("settings.language"));
-
+        $this->loadLanguage();
+        $this->getBaseCommand();
     }
 
     public function onEnable() : void{
         //Register main command with subcommands
-        $command = $this->getMainCommand();
-        $command->registerSubcommand(new ItemSubcommand($command));
-        $command->registerSubcommand(new ArrowSubcommand($command));
-        $this->recalculatePermissions();
+        $command = $this->getBaseCommand();
+        $command->addOverload(new ItemLifespanOverload($command));
+        $command->addOverload(new ArrowLifespanOverload($command));
         $this->getServer()->getCommandMap()->register($this->getName(), $command);
 
         //Load lifespan data
@@ -92,11 +96,13 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
 
         //Register event listeners
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        $this->getServer()->getPluginManager()->registerEvents(new AvaliableCommandListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new EnumUpdateListener(), $this);
     }
 
     public function onDisable() : void{
         //Unregister main command with subcommands
-        $this->getServer()->getCommandMap()->unregister($this->getMainCommand());
+        $this->getServer()->getCommandMap()->unregister($this->getBaseCommand());
 
         //Save lifespan data
         $dataPath = "{$this->getDataFolder()}lifespan.json";
