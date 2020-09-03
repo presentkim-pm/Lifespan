@@ -38,7 +38,6 @@ use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Limits;
 use pocketmine\utils\SingletonTrait;
 
 class Lifespan extends PluginBase implements Listener, TranslatorHolder{
@@ -141,9 +140,9 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
         $entity = $event->getEntity();
         if($entity instanceof ItemEntity){
-            $entity->setDespawnDelay(min(Limits::INT16_MAX, max(0, $this->getItemLifespan())));
+            $entity->setDespawnDelay(min(0x7fff, max(0, $this->getItemLifespan())));
         }elseif($entity instanceof Arrow){
-            $this->property->setValue($entity, min(Limits::INT16_MAX, max(0, $this->getArrowLifespan())));
+            $this->property->setValue($entity, min(0x7fff, max(0, $this->getArrowLifespan())));
         }
     }
 
@@ -156,7 +155,7 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     public function setItemLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
-        }elseif($value > Limits::INT16_MAX){
+        }elseif($value > 0x7fff){
             throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
         }
         $this->itemLifespan = $value;
@@ -171,7 +170,7 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     public function setArrowLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
-        }elseif($value > Limits::INT16_MAX){
+        }elseif($value > 0x7fff){
             throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
         }
         $this->arrowLifespan = $value;
