@@ -27,13 +27,13 @@ declare(strict_types=1);
 
 namespace blugin\lifespan;
 
+use blugin\lib\command\BaseCommandTrait;
+use blugin\lib\command\listener\AvaliableCommandListener;
+use blugin\lib\command\listener\EnumUpdateListener;
+use blugin\lib\translator\traits\TranslatorHolderTrait;
+use blugin\lib\translator\TranslatorHolder;
 use blugin\lifespan\command\overload\ArrowLifespanOverload;
 use blugin\lifespan\command\overload\ItemLifespanOverload;
-use blugin\lifespan\lib\command\BaseCommandTrait;
-use blugin\lifespan\lib\command\listener\AvaliableCommandListener;
-use blugin\lifespan\lib\command\listener\EnumUpdateListener;
-use blugin\lifespan\lib\translator\traits\TranslatorHolderTrait;
-use blugin\lifespan\lib\translator\TranslatorHolder;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
@@ -96,8 +96,9 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
 
         //Register event listeners
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        $this->getServer()->getPluginManager()->registerEvents(new AvaliableCommandListener(), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new EnumUpdateListener(), $this);
+        if(!AvaliableCommandListener::isRegistered()){
+            AvaliableCommandListener::register($this);
+        }
     }
 
     public function onDisable() : void{

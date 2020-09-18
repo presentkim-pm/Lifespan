@@ -27,8 +27,8 @@ declare(strict_types=1);
 
 namespace blugin\lifespan\command\overload;
 
-use blugin\lifespan\lib\command\BaseCommand;
-use blugin\lifespan\lib\command\overload\Overload;
+use blugin\lib\command\BaseCommand;
+use blugin\lib\command\overload\Overload;
 use blugin\lifespan\Lifespan;
 use pocketmine\command\CommandSender;
 

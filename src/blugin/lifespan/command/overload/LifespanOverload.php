@@ -27,10 +27,10 @@ declare(strict_types=1);
 
 namespace blugin\lifespan\command\overload;
 
-use blugin\lifespan\lib\command\BaseCommand;
-use blugin\lifespan\lib\command\handler\ICommandHandler;
-use blugin\lifespan\lib\command\overload\NamedOverload;
-use blugin\lifespan\lib\command\parameter\defaults\FloatParameter;
+use blugin\lib\command\BaseCommand;
+use blugin\lib\command\handler\ICommandHandler;
+use blugin\lib\command\overload\NamedOverload;
+use blugin\lib\command\parameter\defaults\FloatParameter;
 
 abstract class LifespanOverload extends NamedOverload implements ICommandHandler{
     public function __construct(BaseCommand $baseCommand, string $name){
