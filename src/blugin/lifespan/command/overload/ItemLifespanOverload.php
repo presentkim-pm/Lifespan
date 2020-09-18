@@ -25,20 +25,22 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifespan\command;
+namespace blugin\lifespan\command\overload;
 
+use blugin\lib\command\BaseCommand;
+use blugin\lib\command\overload\Overload;
 use blugin\lifespan\Lifespan;
+use pocketmine\command\CommandSender;
 
-class ItemSubcommand extends LifespanSubcommand{
-    /** @return string */
-    public function getLabel() : string{
-        return "item";
+class ItemLifespanOverload extends LifespanOverload{
+    public function __construct(BaseCommand $baseCommand){
+        parent::__construct($baseCommand, "item");
     }
 
-    /** @param int $lifespan */
-    protected function setLifespan(int $lifespan) : void{
-        /** @var Lifespan $plugin */
-        $plugin = $this->getMainCommand()->getOwningPlugin();
-        $plugin->setItemLifespan($lifespan);
+    /** @param mixed[] $args name => value */
+    public function handle(CommandSender $sender, array $args, Overload $overload) : bool{
+        Lifespan::getInstance()->setItemLifespan((int) ($args["seconds"] * 20));
+        $this->sendMessage($sender, "success", [(string) $args["seconds"]]);
+        return true;
     }
 }

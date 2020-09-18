@@ -27,40 +27,27 @@ declare(strict_types=1);
 
 namespace blugin\lifespan;
 
-use blugin\lib\command\SubcommandTrait;
-use blugin\lib\translator\MultilingualConfigTrait;
+use blugin\lib\command\BaseCommandTrait;
+use blugin\lib\command\listener\AvaliableCommandListener;
+use blugin\lib\translator\traits\TranslatorHolderTrait;
 use blugin\lib\translator\TranslatorHolder;
-use blugin\lib\translator\TranslatorHolderTrait;
-use blugin\lifespan\command\ArrowSubcommand;
-use blugin\lifespan\command\ItemSubcommand;
+use blugin\lifespan\command\overload\ArrowLifespanOverload;
+use blugin\lifespan\command\overload\ItemLifespanOverload;
+use blugin\traits\singleton\SingletonTrait;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Limits;
-use pocketmine\utils\SingletonTrait;
 
 class Lifespan extends PluginBase implements Listener, TranslatorHolder{
-    use SingletonTrait, TranslatorHolderTrait, MultilingualConfigTrait, SubcommandTrait;
-
-    public const TYPE_ITEM = 0;
-    public const TYPE_ARROW = 1;
+    use TranslatorHolderTrait, BaseCommandTrait, SingletonTrait;
 
     public const TAG_ITEM = "Item";
     public const TAG_ARROW = "Arrow";
 
-    /** @var \ReflectionProperty */
-    private $property = null;
-
     /** @var int[] */
     private $typeMap;
-
-    /** @var string[] */
-    private $typeTagMap = [
-        self::TYPE_ITEM => "item",
-        self::TYPE_ARROW => "arrow"
-    ];
 
     /** @var int (short) */
     private $itemLifespan = 6000;
@@ -68,30 +55,18 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
     /** @var int (short) */
     private $arrowLifespan = 1200;
 
-    /**
-     * Called when the plugin is loaded, before calling onEnable()
-     *
-     * @throws \ReflectionException
-     */
     public function onLoad() : void{
-        self::setInstance($this);
+        self::$instance = $this;
 
-        $this->loadLanguage($this->getConfig()->getNested("settings.language"));
-
-        $reflection = new \ReflectionClass(Arrow::class);
-        $this->property = $reflection->getProperty("collideTicks");
-        $this->property->setAccessible(true);
+        $this->loadLanguage();
+        $this->getBaseCommand();
     }
 
-    /**
-     * Called when the plugin is enabled
-     */
     public function onEnable() : void{
         //Register main command with subcommands
-        $command = $this->getMainCommand();
-        $command->registerSubcommand(new ItemSubcommand($command));
-        $command->registerSubcommand(new ArrowSubcommand($command));
-        $this->recalculatePermissions();
+        $command = $this->getBaseCommand();
+        $command->addOverload(new ItemLifespanOverload($command));
+        $command->addOverload(new ArrowLifespanOverload($command));
         $this->getServer()->getCommandMap()->register($this->getName(), $command);
 
         //Load lifespan data
@@ -115,15 +90,14 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
 
         //Register event listeners
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        if(!AvaliableCommandListener::isRegistered()){
+            AvaliableCommandListener::register($this);
+        }
     }
 
-    /**
-     * Called when the plugin is disabled
-     * Use this to free open things and finish actions
-     */
     public function onDisable() : void{
         //Unregister main command with subcommands
-        $this->getServer()->getCommandMap()->unregister($this->getMainCommand());
+        $this->getServer()->getCommandMap()->unregister($this->getBaseCommand());
 
         //Save lifespan data
         $dataPath = "{$this->getDataFolder()}lifespan.json";
@@ -135,43 +109,52 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
 
     /**
      * @priority MONITOR
-     *
-     * @param EntitySpawnEvent $event
      */
     public function onEntitySpawnEvent(EntitySpawnEvent $event) : void{
         $entity = $event->getEntity();
         if($entity instanceof ItemEntity){
-            $entity->setDespawnDelay(min(Limits::INT16_MAX, max(0, $this->getItemLifespan())));
+            static $itemLifeProperty = null;
+            if($itemLifeProperty === null){
+                $itemReflection = new \ReflectionClass(ItemEntity::class);
+                $itemLifeProperty = $itemReflection->getProperty("age");
+                $itemLifeProperty->setAccessible(true);
+            }
+            $before = $itemLifeProperty->getValue($entity);
+            $itemLifeProperty->setValue($entity, min(0x7fff, max(0, $before + 6000 - $this->getItemLifespan())));
         }elseif($entity instanceof Arrow){
-            $this->property->setValue($entity, min(Limits::INT16_MAX, max(0, $this->getArrowLifespan())));
+            static $arrowLifeProperty = null;
+            if($arrowLifeProperty === null){
+                $arrowReflection = new \ReflectionClass(Arrow::class);
+                $arrowLifeProperty = $arrowReflection->getProperty("collideTicks");
+                $arrowLifeProperty->setAccessible(true);
+            }
+
+            $before = $arrowLifeProperty->getValue($entity);
+            $arrowLifeProperty->setValue($entity, min(0x7fff, max(0, $before + 1200 - $this->getArrowLifespan())));
         }
     }
 
-    /** @return int */
     public function getItemLifespan() : int{
         return $this->itemLifespan;
     }
 
-    /** @param int $value (short) */
     public function setItemLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
-        }elseif($value > Limits::INT16_MAX){
+        }elseif($value > 0x7fff){
             throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
         }
         $this->itemLifespan = $value;
     }
 
-    /** @return int */
     public function getArrowLifespan() : int{
         return $this->arrowLifespan;
     }
 
-    /** @param int $value (short) */
     public function setArrowLifespan(int $value) : void{
         if($value < 0){
             throw new \InvalidArgumentException("Value {$value} is too small, it must be at least 0");
-        }elseif($value > Limits::INT16_MAX){
+        }elseif($value > 0x7fff){
             throw new \InvalidArgumentException("Value {$value} is too big, it must be at most 0x7fff");
         }
         $this->arrowLifespan = $value;

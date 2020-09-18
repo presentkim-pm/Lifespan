@@ -2,10 +2,10 @@
 name: Lifespan
 main: blugin\lifespan\Lifespan
 version: 2.0.0
-api: [4.0.0]
+api: [3.0.0]
 authors: ['Blugin-team', 'PresentKim']
-description: Set item and arrow's lifespan!
-depend: [libTranslator, libSubcommands]
+description: 'Set item and arrow lifespan!'
+load: STARTUP
 
 permissions:
   lifespan.cmd:

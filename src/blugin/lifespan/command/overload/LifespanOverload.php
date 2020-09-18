@@ -25,20 +25,17 @@
 
 declare(strict_types=1);
 
-namespace blugin\lifespan\command;
+namespace blugin\lifespan\command\overload;
 
-use blugin\lifespan\Lifespan;
+use blugin\lib\command\BaseCommand;
+use blugin\lib\command\handler\ICommandHandler;
+use blugin\lib\command\overload\NamedOverload;
+use blugin\lib\command\parameter\defaults\FloatParameter;
 
-class ArrowSubcommand extends LifespanSubcommand{
-    /** @return string */
-    public function getLabel() : string{
-        return "arrow";
-    }
-
-    /** @param int $lifespan */
-    protected function setLifespan(int $lifespan) : void{
-        /** @var Lifespan $plugin */
-        $plugin = $this->getMainCommand()->getOwningPlugin();
-        $plugin->setArrowLifespan($lifespan);
+abstract class LifespanOverload extends NamedOverload implements ICommandHandler{
+    public function __construct(BaseCommand $baseCommand, string $name){
+        parent::__construct($baseCommand, $name);
+        $this->addParamater((new FloatParameter("seconds"))->setMin(0)->setMax(0x7fff));
+        $this->setHandler($this);
     }
 }
