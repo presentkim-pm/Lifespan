@@ -29,11 +29,11 @@ namespace blugin\lifespan;
 
 use blugin\lib\command\BaseCommandTrait;
 use blugin\lib\command\listener\AvaliableCommandListener;
-use blugin\lib\command\listener\EnumUpdateListener;
 use blugin\lib\translator\traits\TranslatorHolderTrait;
 use blugin\lib\translator\TranslatorHolder;
 use blugin\lifespan\command\overload\ArrowLifespanOverload;
 use blugin\lifespan\command\overload\ItemLifespanOverload;
+use blugin\traits\singleton\SingletonTrait;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\event\entity\EntitySpawnEvent;
@@ -41,13 +41,7 @@ use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 
 class Lifespan extends PluginBase implements Listener, TranslatorHolder{
-    use TranslatorHolderTrait, BaseCommandTrait;
-
-    private static $instance;
-
-    public static function getInstance() : Lifespan{
-        return self::$instance;
-    }
+    use TranslatorHolderTrait, BaseCommandTrait, SingletonTrait;
 
     public const TAG_ITEM = "Item";
     public const TAG_ARROW = "Arrow";
