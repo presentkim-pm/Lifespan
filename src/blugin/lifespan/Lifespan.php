@@ -90,9 +90,7 @@ class Lifespan extends PluginBase implements Listener, TranslatorHolder{
 
         //Register event listeners
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        if(!AvaliableCommandListener::isRegistered()){
-            AvaliableCommandListener::register($this);
-        }
+        AvaliableCommandListener::register($this);
     }
 
     public function onDisable() : void{

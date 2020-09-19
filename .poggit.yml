@@ -8,7 +8,7 @@ projects:
       phpstan: false
     libs:
       - src: blugin/libcommand/libcommand
-        version: ^1.3.2
+        version: ^1.3.3
       - src: blugin/libtranslator/libtranslator
         version: ^1.0.5
       - src: Blugin/virions/SingletonTrait
