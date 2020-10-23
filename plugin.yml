@@ -3,7 +3,7 @@ name: Lifespan
 main: blugin\lifespan\Lifespan
 version: 3.0.0
 api: [3.0.0]
-authors: ['Blugin-team', 'PresentKim']
+authors: ['PresentKim', 'Blugin-team']
 description: 'Set item and arrow lifespan!'
 load: STARTUP
 
