@@ -5,13 +5,6 @@
 
 
 Set item&arrow's lifespan!
-
-## Command
-| name     | arguments                  | description             | permission        |
-| :------: | :------------------------: | :---------------------: | :---------------: |
-| lifespan |  <item / arrow> <lifespan> | Set entity's lifespan   | `OP` lifespan.cmd |
-  
-<br/><br/>
   
 ## Required API
 - PocketMine-MP : higher than [Build #501](https://jenkins.pmmp.io/job/PocketMine-MP/501)

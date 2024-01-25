@@ -1,0 +1,9 @@
+# Main configuration file for Lifespan
+# Some of these settings are safe, others can break your server if modified incorrectly
+# New settings/defaults won't appear automatically in this file when upgrading.
+
+# Item entity lifespan [float: seconds] (default: 300)
+item-lifespan: 300
+
+# arrow entity lifespan [float: seconds] (default: 60)
+arrow-lifespan: 60

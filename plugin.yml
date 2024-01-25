@@ -2,20 +2,7 @@
 name: Lifespan
 main: kim\present\lifespan\Main
 version: 3.0.0
-api: [3.0.0]
+api: [5.0.0]
 author: PresentKim
 description: Set item and arrow lifespan!
-load: STARTUP
-
-permissions:
-  lifespan.cmd:
-    description: Lifespan command
-    default: op
-    children:
-      lifespan.cmd.item:
-        description: Lifespan command - item
-        default: op
-      lifespan.cmd.arrow:
-        description: Lifespan command - arrow
-        default: op
 ...
