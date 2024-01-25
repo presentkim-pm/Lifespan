@@ -3,7 +3,7 @@ branches:
   - main
 projects:
   LifeSpan:
-    icon: "icon.png"
+    icon: "assets/icon.png"
     lint:
       phpstan: false
 ...
