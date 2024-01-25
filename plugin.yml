@@ -4,5 +4,5 @@ main: kim\present\lifespan\Main
 version: 3.0.0
 api: [5.0.0]
 author: PresentKim
-description: Set item and arrow lifespan!
+description: Set the lifespan of items and arrows!
 ...
