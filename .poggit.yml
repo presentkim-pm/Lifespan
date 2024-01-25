@@ -1,8 +1,9 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/PresentKim/Lifespan
 branches:
-  - master
+  - main
 projects:
-  PaymentPool:
+  LifeSpan:
+    projectId: 1826
     icon: "icon.png"
     lint:
       phpstan: false
