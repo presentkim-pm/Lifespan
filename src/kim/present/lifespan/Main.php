@@ -40,7 +40,7 @@ use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 
-class Lifespan extends PluginBase implements Listener, TranslatorHolder{
+class Main extends PluginBase implements Listener, TranslatorHolder{
     use TranslatorHolderTrait, BaseCommandTrait, SingletonTrait;
 
     public const TAG_ITEM = "Item";
