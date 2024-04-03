@@ -12,9 +12,9 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author  PresentKim (debe3721@gmail.com)
- * @link    https://github.com/PresentKim
- * @license https://www.gnu.org/licenses/lgpl-3.0 LGPL-3.0 License
+ * @author       PresentKim (debe3721@gmail.com)
+ * @link         https://github.com/PresentKim
+ * @license      https://www.gnu.org/licenses/lgpl-3.0 LGPL-3.0 License
  *
  *   (\ /)
  *  ( . .) ♥
@@ -37,6 +37,7 @@ use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 
 class Main extends PluginBase implements Listener{
+
     private int $itemLifespan = 6000;
     private int $arrowLifespan = 1200;
 
@@ -77,7 +78,9 @@ class Main extends PluginBase implements Listener{
     public function setItemLifespan(int $value) : void{
         if($value < 0){
             throw new InvalidArgumentException("Value $value is too small, it must be at least 0");
-        }elseif($value > 0x7fff){
+        }
+
+        if($value > 0x7fff){
             throw new InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
         }
         $this->itemLifespan = $value;
@@ -90,7 +93,9 @@ class Main extends PluginBase implements Listener{
     public function setArrowLifespan(int $value) : void{
         if($value < 0){
             throw new InvalidArgumentException("Value $value is too small, it must be at least 0");
-        }elseif($value > 0x7fff){
+        }
+
+        if($value > 0x7fff){
             throw new InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
         }
         $this->arrowLifespan = $value;
