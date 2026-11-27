@@ -1,8 +1,9 @@
 ---
 name: Lifespan
 main: kim\present\lifespan\Main
-version: 4.0.0
-api: [ 5.0.0 ]
+src-namespace-prefix: kim\present\lifespan
+version: 5.0.0
+api: [ 5.51.0 ]
 author: PresentKim
 description: Set the lifespan of items and arrows!
 ...

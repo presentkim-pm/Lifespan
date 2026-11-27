@@ -27,7 +27,6 @@ declare(strict_types=1);
 
 namespace kim\present\lifespan;
 
-use Closure;
 use InvalidArgumentException;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\projectile\Arrow;
@@ -36,15 +35,34 @@ use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 
-class Main extends PluginBase implements Listener{
+use function is_finite;
+use function is_int;
+use function is_numeric;
+
+final class Main extends PluginBase implements Listener{
+
+    public const MAX_LIFESPAN = 0x7fff;
+
+    /** Ticks that an arrow stuck in a block stays before despawning, hardcoded by the server */
+    private const ARROW_DEFAULT_LIFESPAN = 1200;
 
     private int $itemLifespan = 6000;
-    private int $arrowLifespan = 1200;
+    private int $arrowLifespan = self::ARROW_DEFAULT_LIFESPAN;
 
-    public function onEnable() : void{
+    protected function onEnable() : void{
         $config = $this->getConfig();
-        $this->setItemLifespan($config->getNested("item-lifespan", 300) * 20);
-        $this->setArrowLifespan($config->getNested("arrow-lifespan", 60) * 20);
+        try{
+            $this->setItemLifespan(self::secondsToTicks($config->get("item-lifespan", 300)));
+        }catch(InvalidArgumentException $e){
+            $this->getLogger()->warning("Invalid item-lifespan in config.yml, using the default of 300 seconds: " . $e->getMessage());
+            $this->setItemLifespan(300 * 20);
+        }
+        try{
+            $this->setArrowLifespan(self::secondsToTicks($config->get("arrow-lifespan", 60)));
+        }catch(InvalidArgumentException $e){
+            $this->getLogger()->warning("Invalid arrow-lifespan in config.yml, using the default of 60 seconds: " . $e->getMessage());
+            $this->setArrowLifespan(60 * 20);
+        }
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
     }
@@ -61,13 +79,11 @@ class Main extends PluginBase implements Listener{
     public function onProjectileHitEvent(ProjectileHitEvent $event) : void{
         $entity = $event->getEntity();
         if($entity instanceof Arrow){
-            Closure::bind( //HACK: Closure bind hack to access inaccessible members
-                closure: function() use ($entity) : void{
-                    $entity->collideTicks = 1200 - $this->getArrowLifespan();
-                },
-                newThis: $this,
-                newScope: Arrow::class
-            )();
+            $collideTicks = self::ARROW_DEFAULT_LIFESPAN - $this->getArrowLifespan();
+            //HACK: run in the scope of Arrow to access its protected property
+            (function() use ($collideTicks) : void{
+                $this->collideTicks = $collideTicks;
+            })->call($entity);
         }
     }
 
@@ -76,13 +92,7 @@ class Main extends PluginBase implements Listener{
     }
 
     public function setItemLifespan(int $value) : void{
-        if($value < 0){
-            throw new InvalidArgumentException("Value $value is too small, it must be at least 0");
-        }
-
-        if($value > 0x7fff){
-            throw new InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
-        }
+        self::assertValidLifespan($value);
         $this->itemLifespan = $value;
     }
 
@@ -91,13 +101,33 @@ class Main extends PluginBase implements Listener{
     }
 
     public function setArrowLifespan(int $value) : void{
+        self::assertValidLifespan($value);
+        $this->arrowLifespan = $value;
+    }
+
+    /**
+     * Converts a lifespan configured in seconds (int or float) to ticks.
+     *
+     * @throws InvalidArgumentException if the value is not a number
+     */
+    public static function secondsToTicks(mixed $seconds) : int{
+        if(!is_int($seconds) && !is_numeric($seconds)){
+            throw new InvalidArgumentException("Value must be a number of seconds");
+        }
+        $ticks = $seconds * 20;
+        if(!is_finite((float) $ticks)){
+            throw new InvalidArgumentException("Value must be a finite number of seconds");
+        }
+        return (int) $ticks;
+    }
+
+    private static function assertValidLifespan(int $value) : void{
         if($value < 0){
             throw new InvalidArgumentException("Value $value is too small, it must be at least 0");
         }
 
-        if($value > 0x7fff){
+        if($value > self::MAX_LIFESPAN){
             throw new InvalidArgumentException("Value $value is too big, it must be at most 0x7fff");
         }
-        $this->arrowLifespan = $value;
     }
 }
